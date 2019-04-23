@@ -1,0 +1,49 @@
+program -> block
+block   -> '{' decls stmts '}'
+decls   -> decls decl
+           | ε
+decl    -> type ID;
+type    -> type '[' NUM ']'
+           | BASIC
+stmts   -> stmts stmt
+           | ε
+stmt    -> loc '=' bool;
+           | 'if' '(' bool ')' stmt
+           | 'if' '(' bool ')' stmt 'else' stmt
+           | 'while' '(' bool ')' stmt
+           | 'do' stmt 'while' '(' bool ')';
+           | 'break';
+           | block
+loc     -> loc '[' bool ']'
+           | ID
+bool    -> bool '||' join
+           | join
+join    -> join '&&' equality
+           | equality
+equality-> equality '==' rel
+           | equality '!=' rel
+           | rel
+rel     -> expr '<' expr
+           | expr '<=' expr
+           | expr '>' expr
+           | expr '>=' expr
+           | expr
+expr    -> expr '+' term
+           | expr '-' term
+           | term
+term    -> term '*' unary
+           | term '/' unary
+           | unary
+unary   -> '!' unary
+           | '-' unary
+           | factor
+factor  -> '(' bool ')'
+           | loc
+           | NUM
+           | 'true'
+           | 'false'
+
+ID      -> [a-zA-Z][a-zA-Z0-9]*
+NUM     -> [0-9]+
+BASIC   -> 'int'
+           | 'float'
