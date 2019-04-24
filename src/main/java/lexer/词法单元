@@ -1,32 +1,39 @@
-{
-}
-ID
-NUM
-=
-if
-(
-)
-else
-while
-do
-break
-[
-]
-||
-&&
-==
-!=
-<
-<=
->
->=
-+
--
-*
-/
-!
--
-true
-false
-int
-float
+ID: ID
+
+NUM: NUM
+
+括号：{
+    }
+    (
+    )
+    [
+    ]
+
+关键字：if
+    else
+    while
+    do
+    break
+    true
+    false
+    int
+    float
+
+关系运算：||
+    &&
+
+关系运算符：==
+    !=
+    <
+    <=
+    >
+    >=
+
+赋值运算符：=
+
+算术运算符：+
+    -
+    *
+    /
+取反：    !
+取负：    -
