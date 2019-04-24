@@ -1,6 +1,6 @@
 package lexer;
 
-public class StringLexer extends Lexer {
+public class StringLexer extends BaseLexer {
 
     private String source;
     private int current;
@@ -23,7 +23,4 @@ public class StringLexer extends Lexer {
         }
     }
 
-    protected Token nextToken() {
-        return null;
-    }
 }

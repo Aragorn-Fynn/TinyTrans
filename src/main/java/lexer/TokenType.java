@@ -15,7 +15,7 @@ public enum TokenType {
     ASSIGN(9, "ASSIGN"),
     OP_ARITH(10, "OP_ARITH"),
     NOT(11, "NOT"),
-    NEG(12, "NEG");
+    SEMI(12, "SEMI");
 
     private int type;
     private String name;

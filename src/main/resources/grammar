@@ -7,12 +7,12 @@ type    -> type '[' NUM ']'
            | BASIC
 stmts   -> stmts stmt
            | ε
-stmt    -> loc '=' bool;
+stmt    -> loc '=' bool ';'
            | 'if' '(' bool ')' stmt
            | 'if' '(' bool ')' stmt 'else' stmt
            | 'while' '(' bool ')' stmt
-           | 'do' stmt 'while' '(' bool ')';
-           | 'break';
+           | 'do' stmt 'while' '(' bool ')' ';'
+           | 'break' ';'
            | block
 loc     -> loc '[' bool ']'
            | ID
