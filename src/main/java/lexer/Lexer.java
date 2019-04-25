@@ -28,15 +28,26 @@ public abstract class Lexer {
         buffers = new char[2][k+1];
 
         reserved = new HashMap<String, Token>();
-        reserved.put("if", new Token(TokenType.RESERVE, "if"));
-        reserved.put("else", new Token(TokenType.RESERVE, "else"));
-        reserved.put("while", new Token(TokenType.RESERVE, "while"));
-        reserved.put("do", new Token(TokenType.RESERVE, "do"));
-        reserved.put("break", new Token(TokenType.RESERVE, "break"));
-        reserved.put("true", new Token(TokenType.RESERVE, "true"));
-        reserved.put("false", new Token(TokenType.RESERVE, "false"));
-        reserved.put("int", new Token(TokenType.RESERVE, "int"));
-        reserved.put("float", new Token(TokenType.RESERVE, "float"));
+        reserve(new Token(TokenType.IF.getType(), "if"));
+        reserve(new Token(TokenType.ELSE.getType(), "else"));
+        reserve(new Token(TokenType.WHILE.getType(), "while"));
+        reserve(new Token(TokenType.DO.getType(), "do"));
+        reserve(new Token(TokenType.BREAK.getType(), "break"));
+        reserve(new Token(TokenType.TRUE.getType(), "true"));
+        reserve(new Token(TokenType.FALSE.getType(), "false"));
+        reserve(new Token(TokenType.INT.getType(), "int"));
+        reserve(new Token(TokenType.FLOAT.getType(), "float"));
+        reserve(new Token(TokenType.BOOL.getType(), "bool"));
+    }
+
+    //保存关键字
+    public void reserve(Token token) {
+        this.reserved.put(token.getText(), token);
+    }
+
+    //获取关键字
+    public Token getReserved(String name) {
+        return reserved.get(name);
     }
 
     /**
@@ -74,6 +85,10 @@ public abstract class Lexer {
 
     public boolean isLetter(char c) {
         return Character.isLetter(c);
+    }
+
+    public boolean isWhitespace(char c) {
+        return Character.isWhitespace(c);
     }
 
     protected abstract void fillBuffer(char[] buffer);

@@ -1,19 +1,19 @@
 package lexer;
 
 public class Token {
-    private TokenType type;
+    private int type;
     private String text;
 
-    public Token(TokenType type, String text) {
+    public Token(int type, String text) {
         this.type = type;
         this.text = text;
     }
 
-    public TokenType getType() {
+    public int getType() {
         return type;
     }
 
-    public void setType(TokenType type) {
+    public void setType(int type) {
         this.type = type;
     }
 
@@ -27,9 +27,9 @@ public class Token {
 
     @Override
     public String toString() {
-        if (type==TokenType.EOF) {
-            return "<"+type.getName()+", EOF>";
+        if (type==TokenType.EOF.getType()) {
+            return "<"+TokenType.getName(type)+", EOF>";
         }
-        return "<"+type.getName()+", "+text+">";
+        return "<"+TokenType.getName(type)+", "+text+">";
     }
 }
