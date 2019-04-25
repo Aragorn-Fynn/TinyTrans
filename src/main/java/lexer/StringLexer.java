@@ -3,22 +3,21 @@ package lexer;
 public class StringLexer extends BaseLexer {
 
     private String source;
-    private int current;
+    private int curr;
 
     public StringLexer(String source) {
         super(5);
-        current=0;
         this.source = source;
-        fillBuffer(buffers[current]);
+        fillBuffer(buffers[0]);
     }
 
     protected void fillBuffer(char[] buffer) {
         int j=0;
-        for (; current<source.length()&&j<k; current++,j++) {
-            buffer[j] = source.charAt(current);
+        for (; curr<source.length()&&j<k; curr++,j++) {
+            buffer[j] = source.charAt(curr);
         }
 
-        if (current==source.length() && j<k) {
+        if (curr==source.length() && j<k) {
             buffer[j]=EOF;
         }
     }

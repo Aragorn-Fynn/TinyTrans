@@ -11,7 +11,7 @@ public class TestLexer {
                 "\t\tdo i=i+1; while(a[i]<v);\n" +
                 "\t\tdo j=j-1; while(a[j]>v);\n" +
                 "\t\tif( i >= j ) break;\n" +
-                "\t\tx=a[i]; a[i]=a[j]; a[j]=x\n" +
+                "\t\tx=a[i]; a[i]=a[j]; a[j]=x;\n" +
                 "\t}\n" +
                 "}";
         testToken(program);
