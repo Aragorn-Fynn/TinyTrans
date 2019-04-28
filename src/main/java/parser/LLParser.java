@@ -4,21 +4,33 @@ import exception.ParseException;
 import lexer.Lexer;
 import lexer.TokenType;
 
+/**
+ * 将文法改为LL(1)文法，使用递归下降解析器进行解析
+ */
 public class LLParser extends Parser {
     public LLParser(Lexer lexer) {
         super(lexer);
     }
 
+    /**
+     * 解析代码
+     */
     public void parse() {
         program();
         match(TokenType.EOF);
         System.out.println("Syntax correct!");
     }
 
+    /**
+     * 程序
+     */
     private void program() {
         block();
     }
 
+    /**
+     * 块
+     */
     private void block() {
         match(TokenType.LBRACE);
         decls();
@@ -26,6 +38,9 @@ public class LLParser extends Parser {
         match(TokenType.RBRACE);
     }
 
+    /**
+     * 声明语句集合
+     */
     private void decls() {
         decl_();
     }
@@ -48,12 +63,18 @@ public class LLParser extends Parser {
         }
     }
 
+    /**
+     * 声明语句
+     */
     private void decl() {
         type();
         match(TokenType.ID);
         match(TokenType.SEMI);
     }
 
+    /**
+     * 基本类型
+     */
     private void type() {
         basic();
         type_();
@@ -72,6 +93,9 @@ public class LLParser extends Parser {
         }
     }
 
+    /**
+     * 语句集合
+     */
     private void stmts() {
         stmts_();
     }
@@ -92,6 +116,9 @@ public class LLParser extends Parser {
         }
     }
 
+    /**
+     * 语句
+     */
     private void stmt() {
         if (lookAhead.getType()==TokenType.ID.getType()) {
             loc();
@@ -114,6 +141,9 @@ public class LLParser extends Parser {
         }
     }
 
+    /**
+     * if else 语句
+     */
     private void ifelse() {
         match(TokenType.IF);
         match(TokenType.LPAREN);
@@ -126,6 +156,9 @@ public class LLParser extends Parser {
         }
     }
 
+    /**
+     * while语句
+     */
     private void whileStmt() {
         match(TokenType.WHILE);
         match(TokenType.LPAREN);
@@ -134,6 +167,9 @@ public class LLParser extends Parser {
         stmt();
     }
 
+    /**
+     * do while语句
+     */
     private void doWhile() {
         match(TokenType.DO);
         stmt();
