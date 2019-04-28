@@ -93,5 +93,5 @@ public abstract class Lexer {
 
     protected abstract void fillBuffer(char[] buffer);
 
-    protected abstract Token nextToken();
+    public abstract Token nextToken();
 }

@@ -76,4 +76,15 @@ public enum TokenType {
 
         return null;
     }
+
+    public static TokenType getType(int type) {
+        TokenType[] types = TokenType.values();
+        for (TokenType tokenType : types) {
+            if (type==tokenType.getType()) {
+                return tokenType;
+            }
+        }
+
+        return null;
+    }
 }
