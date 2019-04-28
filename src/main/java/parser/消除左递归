@@ -1,0 +1,69 @@
+消除左递归:
+A -> Aα
+   | β
+=>
+A -> βA'
+A'-> αA'
+   | ε
+
+program -> block
+block   -> '{' decls stmts '}'
+decls   -> decl'
+decl'   -> decl decl'
+         | ε
+decl    -> type ID';'
+type    -> BASIC type'
+type'   -> '[' NUM ']' type'
+         | ε
+stmts   -> stmts'
+stmts'  -> stmt stmts'
+         | ε
+stmt    -> loc '=' bool ';'
+         | 'if' '(' bool ')' stmt
+         | 'if' '(' bool ')' stmt 'else' stmt
+         | 'while' '(' bool ')' stmt
+         | 'do' stmt 'while' '(' bool ')' ';'
+         | 'break' ';'
+         | block
+loc     -> ID loc'
+loc'    -> '[' bool ']' loc'
+         | ε
+bool    -> join bool'
+bool'   -> '||' join bool'
+         | ε
+join    -> equality join'
+join'   -> '&&' equality join'
+         | ε
+equality-> rel equality'
+equality'-> '==' rel equality'
+          | '!=' rel equality'
+          | ε
+rel     -> expr rel'
+rel'    -> '<' expr rel'
+         | '<=' expr rel'
+         | '>' expr rel'
+         | '>=' expr
+         | ε
+expr    -> term expr'
+expr'   -> '+' term expr'
+         | '-' term expr'
+         | ε
+term    -> unary term'
+term'   -> '*' unary term'
+         | '/' unary term'
+         | ε
+unary   -> '!' unary
+         | '-' unary
+         | factor
+factor  -> '(' bool ')'
+         | loc
+         | NUM
+         | REAL
+         | 'true'
+         | 'false'
+
+ID      -> [a-zA-Z][a-zA-Z0-9]*
+NUM     -> [0-9]+
+BASIC   -> 'int'
+         | 'float'
+         | 'bool'

@@ -1,8 +1,8 @@
 program -> block
 block   -> '{' decls stmts '}'
 decls   -> decls decl
-           | ε
-decl    -> type ID;
+         | ε
+decl    -> type ID';'
 type    -> type '[' NUM ']'
            | BASIC
 stmts   -> stmts stmt

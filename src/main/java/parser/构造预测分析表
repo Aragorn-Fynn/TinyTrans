@@ -1,0 +1,106 @@
+First集:
+first(program)  = { '{' }
+first(block)    = { '{' }
+first(decls)    = {'int', 'float', 'bool', ε}
+first(decl')    = {'int', 'float', 'bool', ε}
+first(decl)     = {'int', 'float', 'bool'}
+first(type)     = {'int', 'float', 'bool'}
+first(type')    = {'[', ε}
+first(stmts)    = {ID, 'if', 'while', 'do', 'break', '{', ε}
+first(stmts')   = {ID, 'if', 'while', 'do', 'break', '{', ε}
+first(stmt)     = {ID, 'if', 'while', 'do', 'break' '{'}
+first(loc)      = {ID}
+first(loc')     = { '[', ε }
+first(bool)     = {'!', '-', '(', ID, NUM, REAL, 'true', 'false'}
+first(bool')    = {'||', ε}
+first(join)     = {'!', '-', '(', ID, NUM, REAL, 'true', 'false'}
+first(join')    = {'&&', ε}
+first(equality) = {'!', '-', '(', ID, NUM, REAL, 'true', 'false'}
+first(equality')= {'==', '!=', ε}
+first(rel)      = {'!', '-', '(', ID, NUM, REAL, 'true', 'false'}
+first(rel')     = {'<', '<=', '>', '>=', ε}
+first(expr)     = {'!', '-', '(', ID, NUM, REAL, 'true', 'false'}
+first(expr')    = {'+', '-', ε}
+first(term)     = {'!', '-', '(', ID, NUM, REAL, 'true', 'false'}
+first(term')    = {'*', '/', ε}
+first(unary)    = {'!', '-', '(', ID, NUM, REAL, 'true', 'false'}
+first(factor)   = {'(', ID, NUM, REAL, 'true', 'false'}
+first(ID)       = {ID}
+first(NUM)      = {NUM}
+first(REAL)     = {REAL}
+first(BASIC)    = {'int', 'float', 'bool'}
+
+follow集:
+follow(program)     = {$}
+follow(block)       = {$}
+follow(decls)       = {ID, 'if', 'while', 'do', 'break', '{'}
+follow(decl')       = {ID, 'if', 'while', 'do', 'break', '{'}
+follow(decl)        = {'int', 'float', 'bool'}
+follow(type)        = {ID}
+follow(type')       = {ID}
+follow(stmts)       = {'}'}
+follow(stmts')      = {'}'}
+follow(stmt)        = {ID, 'if', 'else', 'while', 'do', 'break', '{'}
+follow(loc)         = {'='}
+follow(loc')        = {'='}
+follow(bool)        = {';', ')', ']'}
+follow(bool')       = {';', ')', ']'}
+follow(join)        = {'||'}
+follow(join')       = {'||'}
+follow(equality)    = {'&&'}
+follow(equality')   = {'&&'}
+follow(rel)         = {'==', '!='}
+follow(rel')        = {'==', '!='}
+follow(expr)        = {'<', '<=', '>', '>='}
+follow(expr')       = {'<', '<=', '>', '>='}
+follow(term)        = {'+', '-'}
+follow(term')       = {'+', '-'}
+follow(unary)       = {'*', '/'}
+follow(factor)      = {'*', '/'}
+
+预测分析表：
+            ID      NUM     REAL        LBRACE      RBRACE      LPAREN      RPAREN    LBRACKET      RBRACKET        IF      ELSE    WHILE   DO  BREAK   TRUE    FALSE   INT     FLOAT   BOOL    OR  AND EQ  NE  LT  LE  GT  GE  ASSIGN  ADD MINUS   MULTI   DIV BITOR   BITAND  NOT SEMI    $
+program
+block
+decls
+decl'
+decl
+type
+type'
+stmts
+stmts'
+stmt
+loc
+loc'
+bool
+bool'
+join
+join'
+equality
+equality'
+rel
+rel'
+expr
+expr'
+term
+term'
+unary
+factor
+ID
+NUM
+REAL
+BASIC
+
+
+
+
+
+
+
+
+
+
+
+
+
+
