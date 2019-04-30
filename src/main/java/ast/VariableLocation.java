@@ -3,12 +3,12 @@ package ast;
 import lexer.Token;
 
 /**
- * break语句
+ * 一般变量
  */
-public class Break extends Statement {
+public class VariableLocation extends Location {
     private Token token;
 
-    public Break(Token token) {
+    public VariableLocation(Token token) {
         this.token = token;
     }
 

@@ -2,6 +2,9 @@ package ast;
 
 import lexer.Token;
 
+/**
+ * 基本类型
+ */
 public class BasicType extends Type {
     private Token type;
 

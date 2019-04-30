@@ -1,10 +1,13 @@
 package ast;
 
+/**
+ * do while语句
+ */
 public class Do extends Statement {
     private Statement stat;
-    private BoolExpr expr;
+    private BiExpr expr;
 
-    public Do(Statement stat, BoolExpr expr) {
+    public Do(Statement stat, BiExpr expr) {
         this.stat = stat;
         this.expr = expr;
     }
@@ -17,11 +20,11 @@ public class Do extends Statement {
         this.stat = stat;
     }
 
-    public BoolExpr getExpr() {
+    public BiExpr getExpr() {
         return expr;
     }
 
-    public void setExpr(BoolExpr expr) {
+    public void setExpr(BiExpr expr) {
         this.expr = expr;
     }
 }

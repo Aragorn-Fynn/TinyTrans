@@ -1,10 +1,13 @@
 package ast;
 
+/**
+ * 赋值语句
+ */
 public class Assign extends Statement {
     private Location left;
-    private BoolExpr right;
+    private Expr right;
 
-    public Assign(Location left, BoolExpr right) {
+    public Assign(Location left, BiExpr right) {
         this.left = left;
         this.right = right;
     }
@@ -17,11 +20,11 @@ public class Assign extends Statement {
         this.left = left;
     }
 
-    public BoolExpr getRight() {
+    public Expr getRight() {
         return right;
     }
 
-    public void setRight(BoolExpr right) {
+    public void setRight(Expr right) {
         this.right = right;
     }
 }

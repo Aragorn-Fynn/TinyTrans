@@ -1,19 +1,22 @@
 package ast;
 
+/**
+ * while语句
+ */
 public class While extends Statement {
-    private BoolExpr expr;
+    private BiExpr expr;
     private Statement stat;
 
-    public While(BoolExpr expr, Statement stat) {
+    public While(BiExpr expr, Statement stat) {
         this.expr = expr;
         this.stat = stat;
     }
 
-    public BoolExpr getExpr() {
+    public BiExpr getExpr() {
         return expr;
     }
 
-    public void setExpr(BoolExpr expr) {
+    public void setExpr(BiExpr expr) {
         this.expr = expr;
     }
 

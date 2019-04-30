@@ -1,5 +1,8 @@
 package ast;
 
+/**
+ * 语句块
+ */
 public class BlockStatement extends Statement {
     private DeclareSeq decls;
     private StatementSeq stmts;

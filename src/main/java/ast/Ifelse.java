@@ -1,21 +1,24 @@
 package ast;
 
+/**
+ * if else 语句
+ */
 public class Ifelse extends Statement {
-    private BoolExpr expr;
+    private BiExpr expr;
     private Statement thenStat;
     private Statement elseStat;
 
-    public Ifelse(BoolExpr expr, Statement thenStat, Statement elseStat) {
+    public Ifelse(BiExpr expr, Statement thenStat, Statement elseStat) {
         this.expr = expr;
         this.thenStat = thenStat;
         this.elseStat = elseStat;
     }
 
-    public BoolExpr getExpr() {
+    public BiExpr getExpr() {
         return expr;
     }
 
-    public void setExpr(BoolExpr expr) {
+    public void setExpr(BiExpr expr) {
         this.expr = expr;
     }
 

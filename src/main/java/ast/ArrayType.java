@@ -2,22 +2,25 @@ package ast;
 
 import lexer.Token;
 
+/**
+ * 数组类型
+ */
 public class ArrayType extends Type {
-    private BasicType type;
+    private Type type;
     private Token num;
     private ArrayType next;
 
-    public ArrayType(BasicType type, Token num, ArrayType next) {
+    public ArrayType(Type type, Token num, ArrayType next) {
         this.type = type;
         this.num = num;
         this.next = next;
     }
 
-    public BasicType getType() {
+    public Type getType() {
         return type;
     }
 
-    public void setType(BasicType type) {
+    public void setType(Type type) {
         this.type = type;
     }
 

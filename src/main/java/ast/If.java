@@ -1,19 +1,22 @@
 package ast;
 
+/**
+ * if语句
+ */
 public class If extends Statement {
-    private BoolExpr expr;
+    private BiExpr expr;
     private Statement stat;
 
-    public If(BoolExpr expr, Statement stat) {
+    public If(BiExpr expr, Statement stat) {
         this.expr = expr;
         this.stat = stat;
     }
 
-    public BoolExpr getExpr() {
+    public BiExpr getExpr() {
         return expr;
     }
 
-    public void setExpr(BoolExpr expr) {
+    public void setExpr(BiExpr expr) {
         this.expr = expr;
     }
 

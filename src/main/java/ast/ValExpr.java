@@ -3,12 +3,12 @@ package ast;
 import lexer.Token;
 
 /**
- * break语句
+ * 单值表达式
  */
-public class Break extends Statement {
+public class ValExpr extends Expr {
     private Token token;
 
-    public Break(Token token) {
+    public ValExpr(Token token) {
         this.token = token;
     }
 

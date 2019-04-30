@@ -1,4 +1,7 @@
 package ast;
 
-public class Location {
+/**
+ * 变量
+ */
+public abstract class Location extends Node {
 }

@@ -3,7 +3,7 @@ package ast;
 /**
  * 语句
  */
-public class StatementSeq extends Node{
+public class StatementSeq extends Node {
 
     private Statement current;
     private StatementSeq next;
