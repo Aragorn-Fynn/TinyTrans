@@ -1,18 +1,20 @@
-语句序列：StatementSeq
+基类：AST
 
 语句：Statement
+语句序列：StatementSeq
 赋值语句；Assign
 if语句：If
-if-else语句：Ifelse
+if-else语句：Else
 while语句；While
 do-while语句：Do
 break语句：Break
 
 表达式：Expr
+数组访问表达式：Access
+变量表达式：ID
 条件表达式：Condition
 关系表达式：Relation
 算数表达式：Operation
 !表达式：Not
 -表达式：Minus
-数组访问表达式：Access
 单值表达式：Int，Float，Bool
