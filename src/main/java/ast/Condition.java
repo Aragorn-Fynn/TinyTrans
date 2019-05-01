@@ -4,25 +4,18 @@ import lexer.Token;
 
 /**
  * 条件表达式
+ * bool/join
  */
 public class Condition extends Expr {
-    private Token token;
     private Expr left;
     private Expr right;
 
     public Condition(Token token, Expr left, Expr right) {
-        this.token = token;
+        super(token);
         this.left = left;
         this.right = right;
     }
 
-    public Token getToken() {
-        return token;
-    }
-
-    public void setToken(Token token) {
-        this.token = token;
-    }
 
     public Expr getLeft() {
         return left;

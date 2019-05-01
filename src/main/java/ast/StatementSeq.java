@@ -1,13 +1,17 @@
 package ast;
 
+import lexer.Token;
+
 /**
  * 语句序列
+ * '{' decls stmts '}'
  */
 public class StatementSeq extends Statement {
     private Statement cur;
     private StatementSeq next;
 
-    public StatementSeq(Statement cur, StatementSeq next) {
+    public StatementSeq(Token token, Statement cur, StatementSeq next) {
+        super(token);
         this.cur = cur;
         this.next = next;
     }

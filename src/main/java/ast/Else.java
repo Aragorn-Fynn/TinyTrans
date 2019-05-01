@@ -1,14 +1,18 @@
 package ast;
 
+import lexer.Token;
+
 /**
  * if-else 语句
+ * 'if' '(' bool ')' stmt 'else' stmt
  */
 public class Else extends Statement {
     private Expr bool;
     private Statement thenStmt;
     private Statement elseStmt;
 
-    public Else(Expr bool, Statement thenStmt, Statement elseStmt) {
+    public Else(Token token, Expr bool, Statement thenStmt, Statement elseStmt) {
+        super(token);
         this.bool = bool;
         this.thenStmt = thenStmt;
         this.elseStmt = elseStmt;

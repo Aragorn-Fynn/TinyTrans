@@ -1,13 +1,17 @@
 package ast;
 
+import lexer.Token;
+
 /**
  * do-while语句
+ * 'do' stmt 'while' '(' bool ')' ';'
  */
 public class Do extends Statement {
     private Statement stmt;
     private Expr bool;
 
-    public Do(Statement stmt, Expr bool) {
+    public Do(Token token, Statement stmt, Expr bool) {
+        super(token);
         this.stmt = stmt;
         this.bool = bool;
     }

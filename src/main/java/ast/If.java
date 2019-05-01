@@ -1,13 +1,17 @@
 package ast;
 
+import lexer.Token;
+
 /**
  * if语句
+ * 'if' '(' bool ')' stmt
  */
 public class If extends Statement {
     private Expr bool;
     private Statement stmt;
 
-    public If(Expr bool, Statement stmt) {
+    public If(Token token, Expr bool, Statement stmt) {
+        super(token);
         this.bool = bool;
         this.stmt = stmt;
     }

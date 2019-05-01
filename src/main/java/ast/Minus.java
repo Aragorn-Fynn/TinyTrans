@@ -1,12 +1,16 @@
 package ast;
 
+import lexer.Token;
+
 /**
  * 负数表达式
+ * '-' unary
  */
 public class Minus extends Expr {
     private Expr expr;
 
-    public Minus(Expr expr) {
+    public Minus(Token token, Expr expr) {
+        super(token);
         this.expr = expr;
     }
 

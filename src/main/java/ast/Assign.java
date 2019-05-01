@@ -1,13 +1,17 @@
 package ast;
 
+import lexer.Token;
+
 /**
  * 赋值语句
+ * loc '=' bool ';'
  */
 public class Assign extends Statement {
     private Expr loc;
     private Expr val;
 
-    public Assign(Expr loc, Expr val) {
+    public Assign(Token token, Expr loc, Expr val) {
+        super(token);
         this.loc = loc;
         this.val = val;
     }

@@ -185,9 +185,13 @@ public abstract class BaseLexer extends Lexer {
 
         goBack();
         consume();
-        return  getReserved(sb.toString()) != null
-                ? getReserved(sb.toString())
-                : new Token(TokenType.ID.getType(), sb.toString());
+        if (getReserved(sb.toString()) != null) {
+            return getReserved(sb.toString());
+        } else {
+            Token newToken = new Token(TokenType.ID.getType(), sb.toString());
+            reserve(newToken);
+            return newToken;
+        }
     }
 
     private Token num(char c) {

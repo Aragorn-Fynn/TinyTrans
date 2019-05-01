@@ -1,12 +1,16 @@
 package ast;
 
+import lexer.Token;
+
 /**
  * 非表达式
+ * '!' unary
  */
 public class Not extends Expr {
     private Expr expr;
 
-    public Not(Expr expr) {
+    public Not(Token token, Expr expr) {
+        super(token);
         this.expr = expr;
     }
 

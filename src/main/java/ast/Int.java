@@ -4,19 +4,12 @@ import lexer.Token;
 
 /**
  * 整数值
+ * NUM
  */
 public class Int extends Expr {
-    private Token token;
 
     public Int(Token token) {
-        this.token = token;
+        super(token);
     }
 
-    public Token getToken() {
-        return token;
-    }
-
-    public void setToken(Token token) {
-        this.token = token;
-    }
 }

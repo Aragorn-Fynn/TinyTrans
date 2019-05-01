@@ -1,5 +1,6 @@
 package parser;
 
+import ast.AST;
 import exception.ParseException;
 import lexer.Lexer;
 import lexer.Token;
@@ -26,5 +27,5 @@ public abstract class Parser {
         this.lookAhead = input.nextToken();
     }
 
-    public abstract void parse();
+    public abstract AST parse();
 }

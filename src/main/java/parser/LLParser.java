@@ -1,7 +1,10 @@
 package parser;
 
+import ast.*;
+import ast.Float;
 import exception.ParseException;
 import lexer.Lexer;
+import lexer.Token;
 import lexer.TokenType;
 
 /**
@@ -15,27 +18,29 @@ public class LLParser extends Parser {
     /**
      * 解析代码
      */
-    public void parse() {
-        program();
+    public AST parse() {
+        AST program = program();
         match(TokenType.EOF);
         System.out.println("Syntax correct!");
+        return program;
     }
 
     /**
      * 程序
      */
-    private void program() {
-        block();
+    private AST program() {
+        return block();
     }
 
     /**
      * 块
      */
-    private void block() {
+    private StatementSeq block() {
         match(TokenType.LBRACE);
         decls();
-        stmts();
+        StatementSeq stmts = stmts();
         match(TokenType.RBRACE);
+        return stmts;
     }
 
     /**
@@ -96,21 +101,22 @@ public class LLParser extends Parser {
     /**
      * 语句集合
      */
-    private void stmts() {
-        stmts_();
+    private StatementSeq stmts() {
+        return stmts_();
     }
 
-    private void stmts_() {
+    private StatementSeq stmts_() {
         if (lookAhead.getType()==TokenType.ID.getType()
                 || lookAhead.getType()==TokenType.IF.getType()
                 || lookAhead.getType()==TokenType.WHILE.getType()
                 || lookAhead.getType()==TokenType.DO.getType()
                 || lookAhead.getType()==TokenType.BREAK.getType()
                 || lookAhead.getType()==TokenType.LBRACE.getType()) {
-            stmt();
-            stmts_();
+            Statement stmt = stmt();
+            StatementSeq stmts = stmts_();
+            return new StatementSeq(null, stmt, stmts);
         } else if (lookAhead.getType()==TokenType.RBRACE.getType()) {
-            return;
+            return null;
         } else {
             throw new ParseException("Expecting stmts_, found "+lookAhead);
         }
@@ -119,78 +125,92 @@ public class LLParser extends Parser {
     /**
      * 语句
      */
-    private void stmt() {
+    private Statement stmt() {
         if (lookAhead.getType()==TokenType.ID.getType()) {
-            loc();
-            match(TokenType.ASSIGN);
-            bool();
-            match(TokenType.SEMI);
+            return Assign();
         } else if (lookAhead.getType()==TokenType.IF.getType()) {
-            ifelse();
+            return ifelse();
         } else if (lookAhead.getType()==TokenType.WHILE.getType()) {
-            whileStmt();
+            return whileStmt();
         } else if (lookAhead.getType()==TokenType.DO.getType()) {
-            doWhile();
+            return doWhile();
         } else if (lookAhead.getType()==TokenType.BREAK.getType()) {
             match(TokenType.BREAK);
             match(TokenType.SEMI);
+            return new Break(input.getReserved(TokenType.BREAK.getName()));
         } else if (lookAhead.getType()==TokenType.LBRACE.getType()) {
-            block();
+            return block();
         } else {
             throw new ParseException("Expecting statement, found "+lookAhead);
         }
     }
 
+    private Assign Assign() {
+        Expr loc = loc();
+        match(TokenType.ASSIGN);
+        Expr val = bool();
+        match(TokenType.SEMI);
+        return new Assign(input.getReserved(TokenType.ASSIGN.getName()), loc, val);
+    }
+
     /**
      * if else 语句
      */
-    private void ifelse() {
+    private Statement ifelse() {
         match(TokenType.IF);
         match(TokenType.LPAREN);
-        bool();
+        Expr expr = bool();
         match(TokenType.RPAREN);
-        stmt();
+        Statement thenStmt = stmt();
         if (lookAhead.getType()== TokenType.ELSE.getType()) {
             match(TokenType.ELSE);
-            stmt();
+            Statement elseStmt = stmt();
+            return new Else(input.getReserved(TokenType.ELSE.getName()), expr, thenStmt, elseStmt);
+        } else {
+            return new If(input.getReserved(TokenType.IF.getName()), expr, thenStmt);
         }
     }
 
     /**
      * while语句
      */
-    private void whileStmt() {
+    private While whileStmt() {
         match(TokenType.WHILE);
         match(TokenType.LPAREN);
-        bool();
+        Expr expr = bool();
         match(TokenType.RPAREN);
-        stmt();
+        Statement stmt = stmt();
+        return new While(input.getReserved(TokenType.WHILE.getName()),expr, stmt);
     }
 
     /**
      * do while语句
      */
-    private void doWhile() {
+    private Do doWhile() {
         match(TokenType.DO);
-        stmt();
+        Statement stmt = stmt();
         match(TokenType.WHILE);
         match(TokenType.LPAREN);
-        bool();
+        Expr expr = bool();
         match(TokenType.RPAREN);
         match(TokenType.SEMI);
+        return new Do(input.getReserved(TokenType.DO.getName()), stmt, expr);
     }
 
-    private void loc() {
+    private Access loc() {
+        ID id = new ID(lookAhead);
         match(TokenType.ID);
-        loc_();
+        Expr expr = loc_(null);
+        return new Access(id, expr);
     }
 
-    private void loc_() {
+    private Expr loc_(Expr expr) {
         if (lookAhead.getType()==TokenType.LBRACK.getType()) {
             match(TokenType.LBRACK);
-            bool();
+            Expr bool = bool();
             match(TokenType.RBRACK);
-            loc_();
+            Expr loc = loc_(bool);
+            return loc;
         } else if (lookAhead.getType()==TokenType.ASSIGN.getType()
                 || lookAhead.getType()==TokenType.NUM.getType()
                 || lookAhead.getType()==TokenType.REAL.getType()
@@ -209,86 +229,94 @@ public class LLParser extends Parser {
                 || lookAhead.getType()==TokenType.SEMI.getType()
                 || lookAhead.getType()==TokenType.RPAREN.getType()
                 || lookAhead.getType()==TokenType.RBRACK.getType()) {
-            return;
+            return expr;
         } else {
             throw new ParseException("Expecting loc_, found "+lookAhead);
         }
     }
 
-    private void bool() {
-        join();
-        bool_();
+    private Expr bool() {
+        Expr left = join();
+        return bool_(left);
     }
 
-    private void bool_() {
+    private Expr bool_(Expr left) {
         if (lookAhead.getType()==TokenType.OR.getType()) {
             match(TokenType.OR);
-            join();
-            bool_();
+            Expr right = join();
+            Condition cond = new Condition(
+                    input.getReserved(TokenType.OR.getName()), left, right);
+            return bool_(cond);
         } else if (lookAhead.getType()==TokenType.SEMI.getType()
                 || lookAhead.getType()==TokenType.RPAREN.getType()
                 || lookAhead.getType()==TokenType.RBRACK.getType()) {
-            return;
+            return left;
         } else {
             throw new ParseException("Expecting bool_, found "+lookAhead);
         }
     }
 
-    private void join() {
-        equality();
-        join_();
+    private Expr join() {
+        Expr left = equality();
+        return join_(left);
     }
 
-    private void join_() {
+    private Expr join_(Expr left) {
         if (lookAhead.getType()==TokenType.AND.getType()) {
             match(TokenType.AND);
-            equality();
-            equality_();
+            Expr right = equality();
+            Condition cond = new Condition(
+                    input.getReserved(TokenType.AND.getName()), left, right);
+            return equality_(cond);
         } else if (lookAhead.getType()==TokenType.OR.getType()
                 || lookAhead.getType()==TokenType.SEMI.getType()
                 || lookAhead.getType()==TokenType.RPAREN.getType()
                 || lookAhead.getType()==TokenType.RBRACK.getType()) {
-            return;
+            return left;
         } else {
             throw new ParseException("Expecting join_, found "+lookAhead);
         }
     }
 
-    private void equality() {
-        rel();
-        equality_();
+    private Expr equality() {
+        Expr left = rel();
+        return equality_(left);
     }
 
-    private void equality_() {
+    private Expr equality_(Expr left) {
         if (lookAhead.getType()==TokenType.EQ.getType()
                 || lookAhead.getType()==TokenType.NE.getType()) {
+            Relation rel = new Relation(lookAhead, left, null);
             match(TokenType.getType(lookAhead.getType()));
-            rel();
-            equality_();
+            Expr right = rel();
+            rel.setRight(right);
+            return equality_(rel);
         } else if (lookAhead.getType()==TokenType.AND.getType()
                 || lookAhead.getType()==TokenType.OR.getType()
                 || lookAhead.getType()==TokenType.SEMI.getType()
                 || lookAhead.getType()==TokenType.RPAREN.getType()
                 || lookAhead.getType()==TokenType.RBRACK.getType()) {
-            return;
+            return left;
         } else {
             throw new ParseException("Expecting equality_, found "+lookAhead);
         }
     }
 
-    private void rel() {
-        expr();
-        rel_();
+    private Expr rel() {
+        Expr left = expr();
+        return rel_(left);
     }
 
-    private void rel_() {
+    private Expr rel_(Expr left) {
         if (lookAhead.getType()==TokenType.LT.getType()
                 || lookAhead.getType()==TokenType.LE.getType()
                 || lookAhead.getType()==TokenType.GT.getType()
                 || lookAhead.getType()==TokenType.GE.getType()) {
+            Relation rel = new Relation(lookAhead, left, null);
             match(TokenType.getType(lookAhead.getType()));
-            expr();
-            rel_();
+            Expr right = expr();
+            rel.setRight(right);
+            return rel_(rel);
         } else if (lookAhead.getType()==TokenType.EQ.getType()
                 || lookAhead.getType()==TokenType.NE.getType()
                 || lookAhead.getType()==TokenType.AND.getType()
@@ -296,23 +324,25 @@ public class LLParser extends Parser {
                 || lookAhead.getType()==TokenType.SEMI.getType()
                 || lookAhead.getType()==TokenType.RPAREN.getType()
                 || lookAhead.getType()==TokenType.RBRACK.getType()) {
-            return;
+            return left;
         } else {
             throw new ParseException("Expecting rel_, found "+lookAhead);
         }
     }
 
-    private void expr() {
-        term();
-        expr_();
+    private Expr expr() {
+        Expr left = term();
+        return expr_(left);
     }
 
-    private void expr_() {
+    private Expr expr_(Expr left) {
         if (lookAhead.getType()== TokenType.ADD.getType()
                 || lookAhead.getType()== TokenType.MINUS.getType()) {
+            Operation op = new Operation(lookAhead, left, null);
             match(TokenType.getType(lookAhead.getType()));
-            term();
-            expr_();
+            Expr right = term();
+            op.setRight(right);
+            return expr_(op);
         } else if (lookAhead.getType()==TokenType.LT.getType()
                 || lookAhead.getType()==TokenType.LE.getType()
                 || lookAhead.getType()==TokenType.GT.getType()
@@ -324,23 +354,25 @@ public class LLParser extends Parser {
                 || lookAhead.getType()==TokenType.SEMI.getType()
                 || lookAhead.getType()==TokenType.RPAREN.getType()
                 || lookAhead.getType()==TokenType.RBRACK.getType()) {
-            return;
+            return left;
         } else {
             throw new ParseException("Expecting expr_, found "+lookAhead);
         }
     }
 
-    private void term() {
-        unary();
-        term_();
+    private Expr term() {
+        Expr left = unary();
+        return term_(left);
     }
 
-    private void term_() {
+    private Expr term_(Expr left) {
         if (lookAhead.getType()==TokenType.MULTI.getType()
                 || lookAhead.getType()== TokenType.DIV.getType()) {
+            Operation op = new Operation(lookAhead, left, null);
             match(TokenType.getType(lookAhead.getType()));
-            unary();
-            term_();
+            Expr right = unary();
+            op.setRight(right);
+            return term_(op);
         } else if (lookAhead.getType()== TokenType.ADD.getType()
                 || lookAhead.getType()== TokenType.MINUS.getType()
                 || lookAhead.getType()==TokenType.LT.getType()
@@ -354,47 +386,54 @@ public class LLParser extends Parser {
                 || lookAhead.getType()==TokenType.SEMI.getType()
                 || lookAhead.getType()==TokenType.RPAREN.getType()
                 || lookAhead.getType()==TokenType.RBRACK.getType()) {
-            return;
+            return left;
         } else {
             throw new ParseException("Expecting term_, found "+lookAhead);
         }
     }
 
-    private void unary() {
-        if (lookAhead.getType()==TokenType.NOT.getType()
-                || lookAhead.getType()==TokenType.MINUS.getType()) {
+    private Expr unary() {
+        if (lookAhead.getType()==TokenType.NOT.getType()) {
+            Not not = new Not(lookAhead, null);
             match(TokenType.getType(lookAhead.getType()));
-            unary();
+            Expr expr = unary();
+            not.setExpr(expr);
+            return not;
+        } else if(lookAhead.getType()==TokenType.MINUS.getType()) {
+            Minus minus = new Minus(lookAhead, null);
+            match(TokenType.getType(lookAhead.getType()));
+            Expr expr = unary();
+            minus.setExpr(expr);
+            return minus;
         } else {
-            factor();
+            return factor();
         }
     }
 
-    private void factor() {
+    private Expr factor() {
         if (lookAhead.getType()==TokenType.LPAREN.getType()) {
             match(TokenType.LPAREN);
-            bool();
+            Expr expr = bool();
             match(TokenType.RPAREN);
+            return expr;
         } else if (lookAhead.getType()==TokenType.ID.getType()) {
-            loc();
-        } else if (lookAhead.getType()==TokenType.NUM.getType()
-                || lookAhead.getType()==TokenType.REAL.getType()
-                || lookAhead.getType()==TokenType.TRUE.getType()
-                || lookAhead.getType()==TokenType.FALSE.getType()
-                || lookAhead.getType()== TokenType.ADD.getType()
-                || lookAhead.getType()== TokenType.MINUS.getType()
-                || lookAhead.getType()==TokenType.LT.getType()
-                || lookAhead.getType()==TokenType.LE.getType()
-                || lookAhead.getType()==TokenType.GT.getType()
-                || lookAhead.getType()==TokenType.GE.getType()
-                || lookAhead.getType()==TokenType.EQ.getType()
-                || lookAhead.getType()==TokenType.NE.getType()
-                || lookAhead.getType()==TokenType.AND.getType()
-                || lookAhead.getType()==TokenType.OR.getType()
-                || lookAhead.getType()==TokenType.SEMI.getType()
-                || lookAhead.getType()==TokenType.RPAREN.getType()
-                || lookAhead.getType()==TokenType.RBRACK.getType()) {
+            return loc();
+        } else if (lookAhead.getType()==TokenType.NUM.getType()) {
+            Int expr = new Int(lookAhead);
             match(TokenType.getType(lookAhead.getType()));
+            return expr;
+        } else if (lookAhead.getType()==TokenType.REAL.getType()) {
+            Float expr = new Float(lookAhead);
+            match(TokenType.getType(lookAhead.getType()));
+            return expr;
+        } else if(lookAhead.getType()==TokenType.TRUE.getType()) {
+            Bool expr = new Bool(lookAhead);
+            match(TokenType.getType(lookAhead.getType()));
+            return expr;
+        } else if (lookAhead.getType()==TokenType.FALSE.getType()) {
+            Bool expr = new Bool(lookAhead);
+            match(TokenType.getType(lookAhead.getType()));
+            return expr;
         } else {
             throw new ParseException("Expecting factor, found "+lookAhead);
         }
