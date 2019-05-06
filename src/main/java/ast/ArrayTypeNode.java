@@ -2,6 +2,7 @@ package ast;
 
 import lexer.Token;
 import symtable.ArrayType;
+import visitor.IVisitor;
 
 /**
  * 数组类型节点
@@ -30,5 +31,9 @@ public class ArrayTypeNode extends TypeNode {
 
     public void setIndex(Int index) {
         this.index = index;
+    }
+
+    public void visit(IVisitor visitor) {
+        visitor.visit(this);
     }
 }

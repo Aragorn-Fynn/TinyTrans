@@ -1,6 +1,7 @@
 package ast;
 
 import lexer.Token;
+import visitor.IVisitor;
 
 /**
  * 非表达式
@@ -20,5 +21,9 @@ public class Not extends Expr {
 
     public void setExpr(Expr expr) {
         this.expr = expr;
+    }
+
+    public void visit(IVisitor visitor) {
+        visitor.visit(this);
     }
 }

@@ -1,6 +1,7 @@
 package ast;
 
 import lexer.Token;
+import visitor.IVisitor;
 
 /**
  * 声明语句
@@ -30,5 +31,9 @@ public class Declare extends Statement {
 
     public void setId(ID id) {
         this.id = id;
+    }
+
+    public void visit(IVisitor visitor) {
+        visitor.visit(this);
     }
 }

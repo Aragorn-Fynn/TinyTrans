@@ -1,6 +1,7 @@
 package ast;
 
 import lexer.Token;
+import visitor.IVisitor;
 
 /**
  * 关系表达式
@@ -30,5 +31,9 @@ public class Relation extends Expr {
 
     public void setRight(Expr right) {
         this.right = right;
+    }
+
+    public void visit(IVisitor visitor) {
+        visitor.visit(this);
     }
 }

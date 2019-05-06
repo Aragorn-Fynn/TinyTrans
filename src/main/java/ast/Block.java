@@ -1,6 +1,7 @@
 package ast;
 
 import lexer.Token;
+import visitor.IVisitor;
 
 public class Block extends Statement {
     private DeclareSeq decls;
@@ -26,5 +27,9 @@ public class Block extends Statement {
 
     public void setStmts(StatementSeq stmts) {
         this.stmts = stmts;
+    }
+
+    public void visit(IVisitor visitor) {
+        visitor.visit(this);
     }
 }

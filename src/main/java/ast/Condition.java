@@ -1,6 +1,7 @@
 package ast;
 
 import lexer.Token;
+import visitor.IVisitor;
 
 /**
  * 条件表达式
@@ -31,5 +32,9 @@ public class Condition extends Expr {
 
     public void setRight(Expr right) {
         this.right = right;
+    }
+
+    public void visit(IVisitor visitor) {
+        visitor.visit(this);
     }
 }

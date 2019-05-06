@@ -1,6 +1,7 @@
 package ast;
 
 import lexer.Token;
+import visitor.IVisitor;
 
 /**
  * 声明序列
@@ -30,5 +31,9 @@ public class DeclareSeq extends AST {
 
     public void setNext(DeclareSeq next) {
         this.next = next;
+    }
+
+    public void visit(IVisitor visitor) {
+        visitor.visit(this);
     }
 }

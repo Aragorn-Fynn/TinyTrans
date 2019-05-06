@@ -1,6 +1,7 @@
 package ast;
 
 import lexer.Token;
+import visitor.IVisitor;
 
 /**
  * if语句
@@ -30,5 +31,9 @@ public class If extends Statement {
 
     public void setStmt(Statement stmt) {
         this.stmt = stmt;
+    }
+
+    public void visit(IVisitor visitor) {
+        visitor.visit(this);
     }
 }

@@ -1,6 +1,7 @@
 package ast;
 
 import lexer.Token;
+import visitor.IVisitor;
 
 /**
  * 语句序列
@@ -30,5 +31,9 @@ public class StatementSeq extends Statement {
 
     public void setNext(StatementSeq next) {
         this.next = next;
+    }
+
+    public void visit(IVisitor visitor) {
+        visitor.visit(this);
     }
 }

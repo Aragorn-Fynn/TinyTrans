@@ -1,6 +1,7 @@
 package ast;
 
 import lexer.Token;
+import visitor.IVisitor;
 
 public abstract class AST {
     private Token token;
@@ -16,4 +17,6 @@ public abstract class AST {
     public void setToken(Token token) {
         this.token = token;
     }
+
+    public abstract void visit(IVisitor visitor);
 }

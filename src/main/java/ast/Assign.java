@@ -1,6 +1,7 @@
 package ast;
 
 import lexer.Token;
+import visitor.IVisitor;
 
 /**
  * 赋值语句
@@ -30,5 +31,9 @@ public class Assign extends Statement {
 
     public void setVal(Expr val) {
         this.val = val;
+    }
+
+    public void visit(IVisitor visitor) {
+        visitor.visit(this);
     }
 }

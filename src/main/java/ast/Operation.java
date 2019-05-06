@@ -1,6 +1,7 @@
 package ast;
 
 import lexer.Token;
+import visitor.IVisitor;
 
 /**
  * 算数表达式
@@ -30,5 +31,9 @@ public class Operation extends Expr {
 
     public void setRight(Expr right) {
         this.right = right;
+    }
+
+    public void visit(IVisitor visitor) {
+        visitor.visit(this);
     }
 }

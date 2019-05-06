@@ -1,5 +1,7 @@
 package ast;
 
+import visitor.IVisitor;
+
 /**
  * 数组访问表达式
  * loc '[' bool ']'
@@ -28,5 +30,9 @@ public class Access extends Expr {
 
     public void setIndex(Expr index) {
         this.index = index;
+    }
+
+    public void visit(IVisitor visitor) {
+        visitor.visit(this);
     }
 }

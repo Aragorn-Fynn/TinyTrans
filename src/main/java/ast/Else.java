@@ -1,6 +1,7 @@
 package ast;
 
 import lexer.Token;
+import visitor.IVisitor;
 
 /**
  * if-else 语句
@@ -40,5 +41,9 @@ public class Else extends Statement {
 
     public void setElseStmt(Statement elseStmt) {
         this.elseStmt = elseStmt;
+    }
+
+    public void visit(IVisitor visitor) {
+        visitor.visit(this);
     }
 }

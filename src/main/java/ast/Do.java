@@ -1,6 +1,7 @@
 package ast;
 
 import lexer.Token;
+import visitor.IVisitor;
 
 /**
  * do-while语句
@@ -30,5 +31,9 @@ public class Do extends Statement {
 
     public void setBool(Expr bool) {
         this.bool = bool;
+    }
+
+    public void visit(IVisitor visitor) {
+        visitor.visit(this);
     }
 }
