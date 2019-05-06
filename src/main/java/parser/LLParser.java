@@ -6,6 +6,9 @@ import exception.ParseException;
 import lexer.Lexer;
 import lexer.Token;
 import lexer.TokenType;
+import symtable.BoolType;
+import symtable.FloatType;
+import symtable.IntType;
 
 /**
  * 将文法改为LL(1)文法，使用递归下降解析器进行解析
@@ -35,34 +38,36 @@ public class LLParser extends Parser {
     /**
      * 块
      */
-    private StatementSeq block() {
+    private Block block() {
         match(TokenType.LBRACE);
-        decls();
+        DeclareSeq decls = decls();
         StatementSeq stmts = stmts();
         match(TokenType.RBRACE);
-        return stmts;
+        Block block = new Block(null, decls, stmts);
+        return block;
     }
 
     /**
      * 声明语句集合
      */
-    private void decls() {
-        decl_();
+    private DeclareSeq decls() {
+        return decl_();
     }
 
-    private void decl_() {
+    private DeclareSeq decl_() {
         if (lookAhead.getType()==TokenType.INT.getType()
                 || lookAhead.getType()==TokenType.FLOAT.getType()
                 || lookAhead.getType()==TokenType.BOOL.getType()) {
-            decl();
-            decl_();
+            Declare decl = decl();
+            DeclareSeq next = decl_();
+            return new DeclareSeq(null, decl, next);
         } else if (lookAhead.getType()==TokenType.ID.getType()
                 || lookAhead.getType()==TokenType.IF.getType()
                 || lookAhead.getType()==TokenType.WHILE.getType()
                 || lookAhead.getType()==TokenType.DO.getType()
                 || lookAhead.getType()==TokenType.BREAK.getType()
                 || lookAhead.getType()==TokenType.LBRACE.getType()) {
-            return;
+            return null;
         } else {
             throw new ParseException("Expecting decl_, found "+lookAhead);
         }
@@ -71,28 +76,32 @@ public class LLParser extends Parser {
     /**
      * 声明语句
      */
-    private void decl() {
-        type();
+    private Declare decl() {
+        TypeNode type = type();
+        ID id = new ID(lookAhead);
         match(TokenType.ID);
         match(TokenType.SEMI);
+        return new Declare(null, type, id);
     }
 
     /**
      * 基本类型
      */
-    private void type() {
-        basic();
-        type_();
+    private TypeNode type() {
+        BuiltInTypeNode basic = basic();
+        return type_(basic);
     }
 
-    private void type_() {
+    private TypeNode type_(TypeNode type) {
         if (lookAhead.getType()==TokenType.LBRACK.getType()) {
             match(TokenType.LBRACK);
+            Token index = lookAhead;
             match(TokenType.NUM);
             match(TokenType.RBRACK);
-            type_();
+            TypeNode arrayType =  type_(type);
+            return new ArrayTypeNode(null, arrayType, new Int(index));
         } else if (lookAhead.getType()==TokenType.ID.getType()) {
-            return;
+            return type;
         } else {
             throw new ParseException("Expecting type_, found "+lookAhead);
         }
@@ -439,13 +448,19 @@ public class LLParser extends Parser {
         }
     }
 
-    private void basic() {
+    private BuiltInTypeNode basic() {
         if (lookAhead.getType()==TokenType.INT.getType()) {
+            Token temp = lookAhead;
             match(TokenType.INT);
+            return new BuiltInTypeNode(temp, new IntType());
         } else if (lookAhead.getType()==TokenType.FLOAT.getType()) {
+            Token temp = lookAhead;
             match(TokenType.FLOAT);
+            return new BuiltInTypeNode(temp, new FloatType());
         } else if (lookAhead.getType()==TokenType.BOOL.getType()) {
+            Token temp = lookAhead;
             match(TokenType.BOOL);
+            return new BuiltInTypeNode(temp, new BoolType());
         } else {
             throw new ParseException("Expecting type, found "+lookAhead);
         }

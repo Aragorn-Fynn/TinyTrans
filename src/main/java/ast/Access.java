@@ -1,7 +1,5 @@
 package ast;
 
-import lexer.Token;
-
 /**
  * 数组访问表达式
  * loc '[' bool ']'

@@ -1,6 +1,13 @@
 基类：AST
 
++声明序列：DeclareSeq
+
++类型：TypeNode
++基本类型：IntTypeNode, FloatTypeNode, BoolTypeNode
++数组类型：ArrayNode
+
 语句：Statement
++声明语句：Declare
 语句序列：StatementSeq
 赋值语句；Assign
 if语句：If
@@ -8,6 +15,7 @@ if-else语句：Else
 while语句；While
 do-while语句：Do
 break语句：Break
++block语句：Block
 
 表达式：Expr
 数组访问表达式：Access
