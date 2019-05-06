@@ -3,10 +3,10 @@ package symtable;
 /**
  * 数组类型
  */
-public class ArrayType extends Type {
+public class ArrayType extends Symbol implements Type {
     private Type elementType;
     public ArrayType(Type elementType) {
-        super(elementType.getName()+"[]");
+        super(elementType.getName()+"[]", "array");
         this.elementType = elementType;
     }
 
@@ -16,5 +16,9 @@ public class ArrayType extends Type {
 
     public void setElementType(Type elementType) {
         this.elementType = elementType;
+    }
+
+    public String getName() {
+        return null;
     }
 }

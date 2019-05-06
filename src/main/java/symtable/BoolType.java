@@ -3,9 +3,9 @@ package symtable;
 /**
  * Bool类型
  */
-public class BoolType extends Type {
+public class BoolType extends Symbol implements Type {
 
     public BoolType() {
-        super("bool");
+        super("bool", "bool");
     }
 }
