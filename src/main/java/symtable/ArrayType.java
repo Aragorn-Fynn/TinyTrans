@@ -19,6 +19,6 @@ public class ArrayType extends Symbol implements Type {
     }
 
     public String getName() {
-        return null;
+        return super.getType();
     }
 }

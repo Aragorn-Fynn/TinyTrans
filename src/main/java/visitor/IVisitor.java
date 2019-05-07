@@ -51,4 +51,8 @@ public interface IVisitor {
     void visit(StatementSeq statementSeq);
 
     void visit(While aWhile);
+
+    void visit(Statement statement);
+
+    void visit(Expr expr);
 }

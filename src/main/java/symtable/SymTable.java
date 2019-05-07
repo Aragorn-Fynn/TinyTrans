@@ -5,7 +5,20 @@ package symtable;
  */
 public class SymTable {
 
+    private static GlobalScope globals = new GlobalScope();
+
     private Scope currentScope;
+
+    public SymTable() {
+        currentScope = globals;
+        initBuiltInTypes();
+    }
+
+    private void initBuiltInTypes() {
+        globals.define(new IntType());
+        globals.define(new FloatType());
+        globals.define(new BoolType());
+    }
 
     /**
      * 解析符号
@@ -50,4 +63,9 @@ public class SymTable {
     public void setCurrentScope(Scope currentScope) {
         this.currentScope = currentScope;
     }
+
+    public GlobalScope getGlobalScope() {
+        return globals;
+    }
+
 }
