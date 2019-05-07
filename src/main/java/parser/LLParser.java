@@ -206,20 +206,20 @@ public class LLParser extends Parser {
         return new Do(input.getReserved(TokenType.DO.getName()), stmt, expr);
     }
 
-    private Access loc() {
+    private Expr loc() {
         ID id = new ID(lookAhead);
         match(TokenType.ID);
-        Expr expr = loc_(null);
-        return new Access(id, expr);
+        Expr expr = loc_(id);
+        return expr;
     }
 
-    private Expr loc_(Expr expr) {
+    private Expr loc_(ID id) {
         if (lookAhead.getType()==TokenType.LBRACK.getType()) {
             match(TokenType.LBRACK);
             Expr bool = bool();
             match(TokenType.RBRACK);
-            Expr loc = loc_(bool);
-            return loc;
+            Access access = new Access(id, bool);
+            return access;
         } else if (lookAhead.getType()==TokenType.ASSIGN.getType()
                 || lookAhead.getType()==TokenType.NUM.getType()
                 || lookAhead.getType()==TokenType.REAL.getType()
@@ -238,7 +238,7 @@ public class LLParser extends Parser {
                 || lookAhead.getType()==TokenType.SEMI.getType()
                 || lookAhead.getType()==TokenType.RPAREN.getType()
                 || lookAhead.getType()==TokenType.RBRACK.getType()) {
-            return expr;
+            return id;
         } else {
             throw new ParseException("Expecting loc_, found "+lookAhead);
         }

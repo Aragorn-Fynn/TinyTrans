@@ -25,7 +25,10 @@ public class SemanticChecker implements IVisitor {
     }
 
     public void visit(Access access) {
-
+        Symbol symbol = symTable.resolve(access.getId().getToken().getText());
+        if (!"array".equals(symbol.getType())) {
+            throw new SemanticException(access.getId().getToken().getText()+"不是数组类型!");
+        }
     }
 
     public void visit(ArrayTypeNode arrayTypeNode) {
@@ -33,7 +36,8 @@ public class SemanticChecker implements IVisitor {
     }
 
     public void visit(Assign assign) {
-
+        assign.getLoc().visit(this);
+        assign.getVal().visit(this);
     }
 
     public void visit(Block block) {
