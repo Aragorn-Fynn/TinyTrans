@@ -36,8 +36,8 @@ public class SemanticChecker implements IVisitor {
     }
 
     public void visit(Assign assign) {
-        assign.getLoc().visit(this);
-        assign.getVal().visit(this);
+        assign.getLoc().accept(this);
+        assign.getVal().accept(this);
     }
 
     public void visit(Block block) {
@@ -134,7 +134,7 @@ public class SemanticChecker implements IVisitor {
 
     public void visit(StatementSeq statementSeq) {
         if (statementSeq!=null) {
-            statementSeq.getCur().visit(this);
+            statementSeq.getCur().accept(this);
             visit(statementSeq.getNext());
         }
     }
@@ -142,7 +142,7 @@ public class SemanticChecker implements IVisitor {
     public void visit(While aWhile) {
         loopStack.push(aWhile);
         visit(aWhile.getBool());
-        aWhile.getStmt().visit(this);
+        aWhile.getStmt().accept(this);
         loopStack.pop();
     }
 

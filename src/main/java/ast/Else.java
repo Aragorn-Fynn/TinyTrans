@@ -43,7 +43,7 @@ public class Else extends Statement {
         this.elseStmt = elseStmt;
     }
 
-    public void visit(IVisitor visitor) {
+    public void accept(IVisitor visitor) {
         visitor.visit(this);
     }
 }

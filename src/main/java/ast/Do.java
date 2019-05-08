@@ -33,7 +33,7 @@ public class Do extends Statement {
         this.bool = bool;
     }
 
-    public void visit(IVisitor visitor) {
+    public void accept(IVisitor visitor) {
         visitor.visit(this);
     }
 }

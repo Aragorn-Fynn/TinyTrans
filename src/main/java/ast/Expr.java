@@ -15,7 +15,4 @@ public abstract class Expr extends AST {
     public Expr(Token token) {
         super(token);
     }
-    public void visit(IVisitor visitor) {
-        visitor.visit(this);
-    }
 }

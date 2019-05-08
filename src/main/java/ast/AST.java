@@ -18,5 +18,5 @@ public abstract class AST {
         this.token = token;
     }
 
-    public abstract void visit(IVisitor visitor);
+    public abstract void accept(IVisitor visitor);
 }

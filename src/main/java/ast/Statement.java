@@ -11,8 +11,4 @@ public abstract class Statement extends AST {
     public Statement(Token token) {
         super(token);
     }
-
-    public void visit(IVisitor visitor) {
-        visitor.visit(this);
-    }
 }

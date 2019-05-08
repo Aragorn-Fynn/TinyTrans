@@ -23,7 +23,7 @@ public class Not extends Expr {
         this.expr = expr;
     }
 
-    public void visit(IVisitor visitor) {
+    public void accept(IVisitor visitor) {
         visitor.visit(this);
     }
 }

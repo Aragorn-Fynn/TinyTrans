@@ -33,7 +33,7 @@ public class Operation extends Expr {
         this.right = right;
     }
 
-    public void visit(IVisitor visitor) {
+    public void accept(IVisitor visitor) {
         visitor.visit(this);
     }
 }

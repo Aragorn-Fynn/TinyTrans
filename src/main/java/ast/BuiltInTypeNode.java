@@ -13,7 +13,7 @@ public class BuiltInTypeNode extends TypeNode {
         super(token, type);
     }
 
-    public void visit(IVisitor visitor) {
+    public void accept(IVisitor visitor) {
         visitor.visit(this);
     }
 }

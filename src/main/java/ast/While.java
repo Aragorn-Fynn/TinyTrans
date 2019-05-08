@@ -33,7 +33,7 @@ public class While extends Statement {
         this.stmt = stmt;
     }
 
-    public void visit(IVisitor visitor) {
+    public void accept(IVisitor visitor) {
         visitor.visit(this);
     }
 }

@@ -33,7 +33,7 @@ public class ArrayTypeNode extends TypeNode {
         this.index = index;
     }
 
-    public void visit(IVisitor visitor) {
+    public void accept(IVisitor visitor) {
         visitor.visit(this);
     }
 }

@@ -29,7 +29,7 @@ public class Block extends Statement {
         this.stmts = stmts;
     }
 
-    public void visit(IVisitor visitor) {
+    public void accept(IVisitor visitor) {
         visitor.visit(this);
     }
 }

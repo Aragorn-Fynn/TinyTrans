@@ -13,7 +13,7 @@ public class Int extends Expr {
         super(token);
     }
 
-    public void visit(IVisitor visitor) {
+    public void accept(IVisitor visitor) {
         visitor.visit(this);
     }
 

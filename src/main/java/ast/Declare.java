@@ -33,7 +33,7 @@ public class Declare extends Statement {
         this.id = id;
     }
 
-    public void visit(IVisitor visitor) {
+    public void accept(IVisitor visitor) {
         visitor.visit(this);
     }
 }

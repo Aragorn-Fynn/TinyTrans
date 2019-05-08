@@ -33,7 +33,7 @@ public class DeclareSeq extends AST {
         this.next = next;
     }
 
-    public void visit(IVisitor visitor) {
+    public void accept(IVisitor visitor) {
         visitor.visit(this);
     }
 }
