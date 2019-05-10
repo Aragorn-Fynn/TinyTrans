@@ -8,6 +8,8 @@ import ast.Float;
  */
 public class IRGenerator implements IVisitor {
 
+    private static int label=0;
+
     public void visit(Access access) {
 
     }
@@ -23,11 +25,31 @@ public class IRGenerator implements IVisitor {
     }
 
     public void visit(Block block) {
+        String label = newLabel();
+        block.getStmts().setNextLabel(label);
         block.getStmts().accept(this);
+        /*label(label);
+        System.out.println();*/
+    }
+
+    private void label(String label) {
+        System.out.printf("%s: ", label);
     }
 
     public void visit(Bool bool) {
-        bool.setAddr(bool);
+        if (bool.getTrueLabel()!=null || bool.getFalseLabel()!=null) {
+            if (bool.getToken().getText().equals("true"))
+                System.out.println(space()+"goto "+bool.getTrueLabel());
+            else
+                System.out.println(space()+"goto "+bool.getFalseLabel());
+
+        } else {
+            bool.setAddr(bool);
+        }
+    }
+
+    private String space() {
+        return "    ";
     }
 
     public void visit(Break aBreak) {
@@ -38,15 +60,37 @@ public class IRGenerator implements IVisitor {
 
     }
 
-    public void visit(Condition condition) {
-        condition.getLeft().accept(this);
-        condition.getRight().accept(this);
-        Temp addr = new Temp();
-        condition.setAddr(addr);
-        System.out.println(addr
-                +"="+condition.getLeft().getAddr().getName()
-                +condition.getToken().getText()
-                +condition.getRight().getAddr().getName());
+    public void visit(Condition expr) {
+        if (expr.getTrueLabel()!=null || expr.getFalseLabel()!=null) {
+            if ("OR".equals(expr.getToken().getText())) {
+                expr.getLeft().setTrueLabel(expr.getTrueLabel());
+                String label = newLabel();
+                expr.getLeft().setFalseLabel(label);
+                expr.getRight().setTrueLabel(expr.getTrueLabel());
+                expr.getRight().setFalseLabel(expr.getFalseLabel());
+                expr.getLeft().accept(this);
+                label(label);
+                expr.getRight().accept(this);
+            } else if ("AND".equals(expr.getToken().getText())) {
+                String label = newLabel();
+                expr.getLeft().setTrueLabel(label);
+                expr.getLeft().setFalseLabel(expr.getFalseLabel());
+                expr.getRight().setTrueLabel(expr.getTrueLabel());
+                expr.getRight().setFalseLabel(expr.getFalseLabel());
+                expr.getLeft().accept(this);
+                label(label);
+                expr.getRight().accept(this);
+            }
+        } else {
+            expr.getLeft().accept(this);
+            expr.getRight().accept(this);
+            Temp addr = new Temp();
+            expr.setAddr(addr);
+            System.out.printf(space()+"%s=%s%s%s%n", addr,
+                    expr.getLeft().getAddr().getName(),
+                    expr.getToken().getText(),
+                    expr.getRight().getAddr().getName());
+        }
     }
 
     public void visit(Declare declare) {
@@ -57,12 +101,27 @@ public class IRGenerator implements IVisitor {
 
     }
 
-    public void visit(Do aDo) {
-
+    public void visit(Do stmt) {
+        String trueLabel = newLabel();
+        stmt.getBool().setTrueLabel(trueLabel);
+        stmt.getBool().setFalseLabel(stmt.getNextLabel());
+        stmt.getStmt().setNextLabel(stmt.getNextLabel());
+        label(trueLabel);
+        stmt.getStmt().accept(this);
+        stmt.getBool().accept(this);
     }
 
-    public void visit(Else anElse) {
-
+    public void visit(Else stmt) {
+        String trueLabel = newLabel();
+        String falseLabel = newLabel();
+        stmt.getThenStmt().setNextLabel(stmt.getNextLabel());
+        stmt.getElseStmt().setNextLabel(stmt.getNextLabel());
+        stmt.getBool().accept(this);
+        label(trueLabel);
+        stmt.getThenStmt().accept(this);
+        System.out.println(space()+"goto " + stmt.getNextLabel());
+        label(falseLabel);
+        stmt.getElseStmt().accept(this);
     }
 
     public void visit(Float aFloat) {
@@ -73,8 +132,15 @@ public class IRGenerator implements IVisitor {
         id.setAddr(id);
     }
 
-    public void visit(If anIf) {
-
+    public void visit(If stmt) {
+        String trueLabel = newLabel();
+        Expr bool = stmt.getBool();
+        bool.setTrueLabel(trueLabel);
+        bool.setFalseLabel(stmt.getNextLabel());
+        stmt.getStmt().setNextLabel(stmt.getNextLabel());
+        stmt.getBool().accept(this);
+        label(trueLabel);
+        stmt.getStmt().accept(this);
     }
 
     public void visit(Int anInt) {
@@ -85,14 +151,20 @@ public class IRGenerator implements IVisitor {
         minus.getExpr().accept(this);
         Temp addr = new Temp();
         minus.setAddr(addr);
-        System.out.println(addr.getName()+" = minus "+minus.getExpr().getAddr().getName());
+        System.out.println(space()+addr.getName()+" = minus "+minus.getExpr().getAddr().getName());
     }
 
     public void visit(Not not) {
-        not.getExpr().accept(this);
-        Temp addr = new Temp();
-        not.setAddr(addr);
-        System.out.println(addr.getName()+" = not "+not.getExpr().getAddr());
+        if (not.getTrueLabel()!=null || not.getFalseLabel()!=null) {
+            not.getExpr().setTrueLabel(not.getFalseLabel());
+            not.getExpr().setFalseLabel(not.getTrueLabel());
+            not.getExpr().accept(this);
+        } else {
+            not.getExpr().accept(this);
+            Temp addr = new Temp();
+            not.setAddr(addr);
+            System.out.println(space()+addr.getName()+" = not "+not.getExpr().getAddr());
+        }
     }
 
     public void visit(Operation operation) {
@@ -100,33 +172,61 @@ public class IRGenerator implements IVisitor {
         operation.getRight().accept(this);
         Temp addr = new Temp();
         operation.setAddr(addr);
-        System.out.println(addr.getName()+"="
-            +operation.getLeft().getAddr().getName()
-            +operation.getToken().getText()
-            +operation.getRight().getAddr().getName());
+        System.out.printf(space()+"%s=%s%s%s%n", addr.getName(),
+                operation.getLeft().getAddr().getName(),
+                operation.getToken().getText(),
+                operation.getRight().getAddr().getName());
     }
 
-    public void visit(Relation relation) {
-        relation.getLeft().accept(this);
-        relation.getRight().accept(this);
-        Temp addr = new Temp();
-        relation.setAddr(addr);
-        System.out.println(addr.getName()+"="
-                +relation.getLeft().getAddr().getName()
-                +relation.getToken().getText()
-                +relation.getRight().getAddr().getName());
-    }
-
-    public void visit(StatementSeq statementSeq) {
-        if (statementSeq != null) {
-            statementSeq.getCur().accept(this);
-            if (statementSeq.getNext()!=null)
-                statementSeq.getNext().accept(this);
+    public void visit(Relation expr) {
+        if (expr.getTrueLabel()!=null || expr.getFalseLabel()!=null) {
+            expr.getLeft().accept(this);
+            expr.getRight().accept(this);
+            System.out.printf(space()+"if %s%s%s goto %s%n",
+                    expr.getLeft().getAddr().getName(),
+                    expr.getToken().getText(),
+                    expr.getRight().getAddr().getName(),
+                    expr.getTrueLabel());
+            System.out.printf(space()+"goto %s%n", expr.getFalseLabel());
+        } else {
+            expr.getLeft().accept(this);
+            expr.getRight().accept(this);
+            Temp addr = new Temp();
+            expr.setAddr(addr);
+            System.out.printf("%s=%s%s%s%n", addr.getName(),
+                    expr.getLeft().getAddr().getName(),
+                    expr.getToken().getText(),
+                    expr.getRight().getAddr().getName());
         }
     }
 
-    public void visit(While aWhile) {
+    public void visit(StatementSeq seq) {
+        if (seq != null) {
+            String label1 = newLabel();
+            seq.getCur().setNextLabel(label1);
+            if (seq.getNext()!=null) {
+                seq.getNext().setNextLabel(seq.getNextLabel());
+            }
+            seq.getCur().accept(this);
+            label(label1);
+            System.out.println();
+            if (seq.getNext()!=null) {
+                seq.getNext().accept(this);
+            }
+        }
+    }
 
+    public void visit(While stmt) {
+        String begin = newLabel();
+        String trueLabel = newLabel();
+        stmt.getBool().setTrueLabel(trueLabel);
+        stmt.getBool().setFalseLabel(stmt.getNextLabel());
+        stmt.getStmt().setNextLabel(begin);
+        label(begin);
+        stmt.getBool().accept(this);
+        label(trueLabel);
+        stmt.getStmt().accept(this);
+        System.out.printf(space()+"goto %s%n", begin);
     }
 
     public void visit(Statement statement) {
@@ -134,5 +234,9 @@ public class IRGenerator implements IVisitor {
 
     public void visit(Expr expr) {
 
+    }
+
+    private String newLabel() {
+        return "L"+label++;
     }
 }

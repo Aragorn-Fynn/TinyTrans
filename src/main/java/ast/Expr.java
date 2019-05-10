@@ -12,6 +12,8 @@ public abstract class Expr extends AST {
     //用于语义检查
     private Type type;
     private Address addr;
+    private String falseLabel;
+    private String trueLabel;
 
     public Expr(Token token) {
         super(token);
@@ -31,5 +33,21 @@ public abstract class Expr extends AST {
 
     public void setAddr(Address addr) {
         this.addr = addr;
+    }
+
+    public String getFalseLabel() {
+        return falseLabel;
+    }
+
+    public void setFalseLabel(String falseLabel) {
+        this.falseLabel = falseLabel;
+    }
+
+    public String getTrueLabel() {
+        return trueLabel;
+    }
+
+    public void setTrueLabel(String trueLabel) {
+        this.trueLabel = trueLabel;
     }
 }

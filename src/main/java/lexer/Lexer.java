@@ -38,6 +38,8 @@ public abstract class Lexer {
         reserve(new Token(TokenType.INT.getType(), "int"));
         reserve(new Token(TokenType.FLOAT.getType(), "float"));
         reserve(new Token(TokenType.BOOL.getType(), "bool"));
+        reserve(new Token(TokenType.OR.getType(), "OR"));
+        reserve(new Token(TokenType.AND.getType(), "AND"));
     }
 
     //保存关键字
