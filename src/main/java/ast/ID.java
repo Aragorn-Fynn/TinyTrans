@@ -7,7 +7,7 @@ import visitor.IVisitor;
  * 变量表达式
  * ID
  */
-public class ID extends Expr {
+public class ID extends Expr implements Address {
 
     public ID(Token token) {
         super(token);
@@ -17,4 +17,8 @@ public class ID extends Expr {
         visitor.visit(this);
     }
 
+
+    public String getName() {
+        return this.getToken().getText();
+    }
 }

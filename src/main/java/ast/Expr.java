@@ -10,9 +10,26 @@ import visitor.IVisitor;
 public abstract class Expr extends AST {
 
     //用于语义检查
-    public Type type;
+    private Type type;
+    private Address addr;
 
     public Expr(Token token) {
         super(token);
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
+    }
+
+    public Address getAddr() {
+        return addr;
+    }
+
+    public void setAddr(Address addr) {
+        this.addr = addr;
     }
 }

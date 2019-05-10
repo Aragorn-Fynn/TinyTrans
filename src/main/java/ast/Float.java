@@ -7,7 +7,7 @@ import visitor.IVisitor;
  * 浮点数值
  * REAL
  */
-public class Float extends Expr {
+public class Float extends Expr implements Address {
 
     public Float(Token token) {
         super(token);
@@ -17,4 +17,7 @@ public class Float extends Expr {
         visitor.visit(this);
     }
 
+    public String getName() {
+        return this.getToken().getText();
+    }
 }
