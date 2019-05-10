@@ -36,4 +36,8 @@ public class ArrayTypeNode extends TypeNode {
     public void accept(IVisitor visitor) {
         visitor.visit(this);
     }
+
+    public String toString() {
+        return typeNode.toString()+"["+index+"]";
+    }
 }

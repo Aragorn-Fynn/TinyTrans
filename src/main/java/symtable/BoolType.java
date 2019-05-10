@@ -6,6 +6,8 @@ package symtable;
 public class BoolType extends Symbol implements Type {
 
     public BoolType() {
-        super("bool", "bool");
+        super("bool");
+        super.setType(this);
     }
+
 }

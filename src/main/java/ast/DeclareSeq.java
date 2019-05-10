@@ -36,4 +36,14 @@ public class DeclareSeq extends AST {
     public void accept(IVisitor visitor) {
         visitor.visit(this);
     }
+
+    public String toString() {
+        StringBuffer sb = new StringBuffer(decl.toString());
+        DeclareSeq next = this.next;
+        while (next != null) {
+            sb.append(next.getDecl().toString()).append("\n");
+            next = next.getNext();
+        }
+        return sb.toString();
+    }
 }

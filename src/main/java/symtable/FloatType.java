@@ -5,6 +5,7 @@ package symtable;
  */
 public class FloatType extends Symbol implements Type {
     public FloatType() {
-        super("float", "float");
+        super("float");
+        super.setType(this);
     }
 }

@@ -46,4 +46,8 @@ public class Else extends Statement {
     public void accept(IVisitor visitor) {
         visitor.visit(this);
     }
+
+    public String toString() {
+        return "if ("+bool.toString()+")"+thenStmt.toString()+" else "+elseStmt.toString();
+    }
 }

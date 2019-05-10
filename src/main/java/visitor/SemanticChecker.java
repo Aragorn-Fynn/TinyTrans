@@ -3,15 +3,12 @@ package visitor;
 import ast.*;
 import ast.Float;
 import exception.SemanticException;
-import symtable.LocalScope;
-import symtable.SymTable;
-import symtable.Symbol;
-import symtable.VariableSymbol;
+import symtable.*;
 
 import java.util.Stack;
 
 /**
- * 语义检查
+ * 静态检查
  */
 public class SemanticChecker implements IVisitor {
 
@@ -26,8 +23,8 @@ public class SemanticChecker implements IVisitor {
 
     public void visit(Access access) {
         Symbol symbol = symTable.resolve(access.getId().getToken().getText());
-        if (!"array".equals(symbol.getType())) {
-            throw new SemanticException(access.getId().getToken().getText()+"不是数组类型!");
+        if (!(symbol.getType() instanceof ArrayType)) {
+            throw new SemanticException(access.getId().getToken().getText()+"不是数组类型: "+access.toString());
         }
     }
 
@@ -42,11 +39,8 @@ public class SemanticChecker implements IVisitor {
 
     public void visit(Block block) {
         symTable.push(new LocalScope(symTable.getCurrentScope()));
-        DeclareSeq decls = block.getDecls();
-        visit(decls);
-
-        StatementSeq stmts = block.getStmts();
-        visit(stmts);
+        block.getDecls().accept(this);
+        block.getStmts().accept(this);
         symTable.pop();
     }
 
@@ -54,11 +48,12 @@ public class SemanticChecker implements IVisitor {
         Symbol symbol = new Symbol(bool.getToken().getText(), symTable.resolve("bool").getType());
         symbol.setScope(symTable.getCurrentScope());
         symTable.define(symbol);
+        bool.setType(symTable.resolve("bool").getType());
     }
 
     public void visit(Break aBreak) {
         if (loopStack.empty())
-            throw new SemanticException("break语句只能在循环中出现");
+            throw new SemanticException("break语句只能在循环中出现: "+aBreak.toString());
     }
 
     public void visit(BuiltInTypeNode builtInTypeNode) {
@@ -66,83 +61,139 @@ public class SemanticChecker implements IVisitor {
     }
 
     public void visit(Condition condition) {
-
+        condition.getLeft().accept(this);
+        if (!(condition.getLeft().getType() instanceof BoolType)) {
+            throw new SemanticException("条件语句只能是bool类型: "+condition.getLeft().toString());
+        }
+        condition.getRight().accept(this);
+        if (!(condition.getRight().getType() instanceof BoolType)) {
+            throw new SemanticException("条件语句只能是bool类型: "+condition.getRight().toString());
+        }
+        condition.setType(symTable.resolve("bool").getType());
     }
 
     public void visit(Declare declare) {
         TypeNode type = declare.getType();
         ID id = declare.getId();
-        VariableSymbol symbol = new VariableSymbol(id.getToken().getText(), type.getType().getName());
+        VariableSymbol symbol = new VariableSymbol(id.getToken().getText(), type.getType());
         symbol.setScope(symTable.getCurrentScope());
         symTable.define(symbol);
     }
 
-    public void visit(DeclareSeq declareSeq) {
-        if (declareSeq!=null) {
-            Declare decl = declareSeq.getDecl();
-            visit(decl);
-            visit(declareSeq.getNext());
+    public void visit(DeclareSeq stmt) {
+        if (stmt!=null) {
+            stmt.getDecl().accept(this);
+            if (stmt.getNext()!=null) {
+                stmt.getNext().accept(this);
+            }
         }
     }
 
-    public void visit(Do aDo) {
-        loopStack.push(aDo);
-        visit(aDo.getStmt());
-        visit(aDo.getBool());
+    public void visit(Do stmt) {
+        loopStack.push(stmt);
+        stmt.getStmt().accept(this);
+        stmt.getBool().accept(this);
+        if (!(stmt.getBool().getType() instanceof BoolType)) {
+            throw new SemanticException("do条件只能是bool类型: "+stmt.getBool().toString());
+        }
         loopStack.pop();
     }
 
-    public void visit(Else anElse) {
-
+    public void visit(Else stmt) {
+        stmt.getBool().accept(this);
+        if (!(stmt.getBool().getType() instanceof BoolType)) {
+            throw new SemanticException("if条件只能是bool类型: "+stmt.getBool().toString());
+        }
+        stmt.getThenStmt().accept(this);
+        stmt.getElseStmt().accept(this);
     }
 
-    public void visit(Float aFloat) {
-        Symbol symbol = new Symbol(aFloat.getToken().getText(), symTable.resolve("float").getType());
+    public void visit(Float expr) {
+        Symbol symbol = new Symbol(expr.getToken().getText(), symTable.resolve("float").getType());
         symbol.setScope(symTable.getCurrentScope());
         symTable.define(symbol);
+        expr.setType(symTable.resolve("float").getType());
     }
 
     public void visit(ID id) {
-
+        id.setType(symTable.resolve(id.getToken().getText()).getType());
     }
 
-    public void visit(If anIf) {
-
+    public void visit(If stmt) {
+        stmt.getBool().accept(this);
+        if (!(stmt.getBool().getType() instanceof BoolType)) {
+            throw new SemanticException("if条件只能是bool类型: "+stmt.getBool().toString());
+        }
+        stmt.getStmt().accept(this);
     }
 
-    public void visit(Int anInt) {
-        Symbol symbol = new Symbol(anInt.getToken().getText(), symTable.resolve("int").getType());
+    public void visit(Int expr) {
+        Symbol symbol = new Symbol(expr.getToken().getText(), symTable.resolve("int").getType());
         symbol.setScope(symTable.getCurrentScope());
         symTable.define(symbol);
+        expr.setType(symTable.resolve("int").getType());
     }
 
     public void visit(Minus minus) {
-
-    }
-
-    public void visit(Not not) {
-
-    }
-
-    public void visit(Operation operation) {
-
-    }
-
-    public void visit(Relation relation) {
-
-    }
-
-    public void visit(StatementSeq statementSeq) {
-        if (statementSeq!=null) {
-            statementSeq.getCur().accept(this);
-            visit(statementSeq.getNext());
+        minus.getExpr().accept(this);
+        if (minus.getExpr().getType() instanceof BoolType) {
+            throw new SemanticException("minus语句不能是bool类型: "+minus.toString());
         }
     }
 
-    public void visit(While aWhile) {
-        loopStack.push(aWhile);
-        visit(aWhile.getBool());
-        aWhile.getStmt().accept(this);
+    public void visit(Not not) {
+        not.getExpr().accept(this);
+        if (!(not.getExpr().getType() instanceof BoolType)) {
+            throw new SemanticException("not语句只能是bool类型: "+not.toString());
+        }
+    }
+
+    public void visit(Operation expr) {
+        expr.getLeft().accept(this);
+        if (expr.getLeft().getType() instanceof BoolType) {
+            throw new SemanticException("not语句不能是bool类型: "+expr.toString());
+        }
+        expr.getRight().accept(this);
+        if (expr.getRight().getType() instanceof BoolType) {
+            throw new SemanticException("not语句不能是bool类型: "+expr.toString());
+        }
+        if (!expr.getLeft().getType().getName().equals(expr.getRight().getType().getName())) {
+            throw new SemanticException("算数表达式左右类型应该相同: "+expr.toString());
+        }
+        expr.setType(expr.getLeft().getType());
+    }
+
+    public void visit(Relation expr) {
+        expr.getLeft().accept(this);
+        expr.getRight().accept(this);
+        if ((expr.getLeft().getType() instanceof BoolType
+                && expr.getRight().getType() instanceof BoolType &&
+                (expr.getToken().getText().equals("==")
+                        || expr.getToken().getText().equals("!=")))
+                || (!(expr.getLeft().getType() instanceof BoolType)
+                 && !(expr.getRight().getType() instanceof BoolType))) {
+            expr.setType(symTable.resolve("bool").getType());
+            return;
+        }
+        throw new SemanticException("关系表达式语句错误: "+expr.toString());
+    }
+
+    public void visit(StatementSeq stmt) {
+        if (stmt!=null) {
+            stmt.getCur().accept(this);
+            if (stmt.getNext()!=null) {
+                stmt.getNext().accept(this);
+            }
+        }
+    }
+
+    public void visit(While stmt) {
+        loopStack.push(stmt);
+        stmt.getBool().accept(this);
+        if (!(stmt.getBool().getType() instanceof BoolType)) {
+            throw new SemanticException("while条件只能是bool类型: "+stmt.getBool().toString());
+        }
+        stmt.getStmt().accept(this);
         loopStack.pop();
     }
 

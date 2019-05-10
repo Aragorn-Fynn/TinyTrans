@@ -16,4 +16,8 @@ public class BuiltInTypeNode extends TypeNode {
     public void accept(IVisitor visitor) {
         visitor.visit(this);
     }
+
+    public String toString() {
+        return getToken().getText();
+    }
 }

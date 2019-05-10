@@ -32,4 +32,12 @@ public class Block extends Statement {
     public void accept(IVisitor visitor) {
         visitor.visit(this);
     }
+
+    public String toString() {
+        StringBuffer sb = new StringBuffer();
+        sb.append(decls.toString());
+        sb.append(stmts.toString());
+
+        return sb.toString();
+    }
 }

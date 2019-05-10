@@ -1,5 +1,7 @@
 package symtable;
 
+import exception.SemanticException;
+
 /**
  * 符号表
  */
@@ -26,7 +28,10 @@ public class SymTable {
      * @return
      */
     public Symbol resolve(String name) {
-        return currentScope.resolve(name);
+        Symbol symbol = currentScope.resolve(name);
+        if (symbol==null)
+            throw new SemanticException(name+"未声明！");
+        return symbol;
     }
 
     /**

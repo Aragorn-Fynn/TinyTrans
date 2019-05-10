@@ -7,11 +7,15 @@ public class Symbol {
     //名称
     private String name;
     //类型
-    private String type;
+    private Type type;
     //包含当前symbol的作用域
     private Scope scope;
 
-    public Symbol(String name, String type) {
+    public Symbol(String name) {
+        this.name = name;
+    }
+
+    public Symbol(String name, Type type) {
         this.name = name;
         this.type = type;
     }
@@ -24,11 +28,11 @@ public class Symbol {
         this.name = name;
     }
 
-    public String getType() {
+    public Type getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(Type type) {
         this.type = type;
     }
 

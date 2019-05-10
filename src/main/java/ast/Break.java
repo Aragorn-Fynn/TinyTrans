@@ -17,4 +17,8 @@ public class Break extends Statement {
         visitor.visit(this);
     }
 
+    public String toString() {
+        return getToken().getText();
+    }
+
 }

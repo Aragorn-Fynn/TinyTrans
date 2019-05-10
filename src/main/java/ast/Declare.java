@@ -36,4 +36,8 @@ public class Declare extends Statement {
     public void accept(IVisitor visitor) {
         visitor.visit(this);
     }
+
+    public String toString() {
+        return type.toString()+" "+id.getName();
+    }
 }

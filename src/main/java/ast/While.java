@@ -36,4 +36,8 @@ public class While extends Statement {
     public void accept(IVisitor visitor) {
         visitor.visit(this);
     }
+
+    public String toString() {
+        return "while ("+bool.toString()+") "+stmt.toString();
+    }
 }

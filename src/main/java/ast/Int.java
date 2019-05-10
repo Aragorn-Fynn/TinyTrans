@@ -20,4 +20,8 @@ public class Int extends Expr implements Address {
     public String getName() {
         return this.getToken().getText();
     }
+
+    public String toString() {
+        return getName();
+    }
 }

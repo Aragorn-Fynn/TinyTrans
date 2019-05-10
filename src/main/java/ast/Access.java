@@ -35,4 +35,8 @@ public class Access extends Expr {
     public void accept(IVisitor visitor) {
         visitor.visit(this);
     }
+
+    public String toString() {
+        return id.getName()+"["+index.toString()+"]";
+    }
 }

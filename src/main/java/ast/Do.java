@@ -36,4 +36,9 @@ public class Do extends Statement {
     public void accept(IVisitor visitor) {
         visitor.visit(this);
     }
+
+    public String toString() {
+        return "do"+stmt.toString()+"while("+bool+")";
+    }
 }
+

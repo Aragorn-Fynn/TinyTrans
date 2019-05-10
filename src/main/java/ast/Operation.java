@@ -36,4 +36,8 @@ public class Operation extends Expr {
     public void accept(IVisitor visitor) {
         visitor.visit(this);
     }
+
+    public String toString() {
+        return left.toString()+getToken().getText()+right.toString();
+    }
 }

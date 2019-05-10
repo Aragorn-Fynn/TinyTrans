@@ -6,7 +6,8 @@ package symtable;
 public class ArrayType extends Symbol implements Type {
     private Type elementType;
     public ArrayType(Type elementType) {
-        super(elementType.getName()+"[]", "array");
+        super(elementType.getName()+"[]");
+        super.setType(this);
         this.elementType = elementType;
     }
 
@@ -19,6 +20,6 @@ public class ArrayType extends Symbol implements Type {
     }
 
     public String getName() {
-        return super.getType();
+        return elementType.getName()+"[]";
     }
 }

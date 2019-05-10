@@ -12,7 +12,7 @@ public class FileLexer extends BaseLexer {
      *
      */
     public FileLexer(String fileName) {
-        super(5);
+        super(7);
         try {
             File sourceFiile = new File(fileName);
             FileReader fileReader = new FileReader(sourceFiile);

@@ -36,4 +36,14 @@ public class StatementSeq extends Statement {
     public void accept(IVisitor visitor) {
         visitor.visit(this);
     }
+
+    public String toString() {
+        StringBuffer sb = new StringBuffer(cur.toString());
+        StatementSeq next = this.next;
+        while (next != null) {
+            sb.append(next.getNext().toString()).append("\n");
+            next = next.getNext();
+        }
+        return sb.toString();
+    }
 }

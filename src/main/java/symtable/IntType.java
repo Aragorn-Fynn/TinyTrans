@@ -5,6 +5,7 @@ package symtable;
  */
 public class IntType extends Symbol implements Type {
     public IntType() {
-        super("int", "int");
+        super("int");
+        super.setType(this);
     }
 }
