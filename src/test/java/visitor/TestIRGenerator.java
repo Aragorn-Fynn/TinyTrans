@@ -9,7 +9,7 @@ import parser.Parser;
 
 public class TestIRGenerator {
     public static void main(String[] args) {
-        String fileName = "E:\\workspace\\TinyTrans\\src\\main\\resources\\test4";
+        String fileName = "E:\\workspace\\TinyTrans\\src\\main\\resources\\test";
         testIRGenerator(fileName);
     }
 

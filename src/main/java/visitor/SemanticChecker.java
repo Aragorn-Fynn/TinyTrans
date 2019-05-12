@@ -30,8 +30,10 @@ public class SemanticChecker implements IVisitor {
             }
             access.setType(((ArrayType) symbol.getType()).getElementType());
             access.getId().setScope(symTable.getCurrentScope());
+            access.setArray(symbol);
         } else {
             access.setType(((ArrayType)access.getId().getType()).getElementType());
+            access.setArray(access.getId().getArray());
         }
         access.getIndex().accept(this);
     }
@@ -47,8 +49,11 @@ public class SemanticChecker implements IVisitor {
 
     public void visit(Block block) {
         symTable.push(new LocalScope(symTable.getCurrentScope()));
-        block.getDecls().accept(this);
-        block.getStmts().accept(this);
+        if (block.getDecls()!=null)
+            block.getDecls().accept(this);
+        if (block.getStmts()!=null) {
+            block.getStmts().accept(this);
+        }
         symTable.pop();
     }
 

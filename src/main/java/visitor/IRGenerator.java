@@ -6,6 +6,7 @@ import symtable.ArrayType;
 import symtable.SymTable;
 
 import javax.swing.*;
+import java.util.Stack;
 
 /**
  * 中间代码生成
@@ -14,39 +15,39 @@ public class IRGenerator implements IVisitor {
 
     private static int label=0;
 
+    private Stack<AST> loopStack=new Stack<AST>();
+
     public void visit(Access access) {
         if (!(access.getId() instanceof Access)) {
-            access.setArray(access.getId().getScope().resolve(access.getId().getName()));
             Temp addr = new Temp();
             access.setAddr(addr);
             access.getIndex().accept(this);
-            System.out.printf("%s=%s*%d%n",
+            System.out.printf(space()+"%s=%s*%d%n",
                     addr.getName(),
                     access.getIndex().getAddr().getName(),
                     access.getType().getWidth());
         } else {
             access.getId().accept(this);
-            access.setArray(access.getId().getArray());
             Temp temp = new Temp();
             Temp addr = new Temp();
             access.setAddr(addr);
             access.getIndex().accept(this);
-            System.out.printf("%s=%s*%d%n",
+            System.out.printf(space()+"%s=%s*%d%n",
                     temp.getName(),
                     access.getIndex().getAddr().getName(),
                     access.getType().getWidth());
-            System.out.printf("%s=%s+%s%n",
+            System.out.printf(space()+"%s=%s+%s%n",
                     addr.getName(),
                     access.getId().getAddr().getName(),
                     temp.getName());
-            if (!access.isLeft()) {
-                Temp addrs = new Temp();
-                access.setAddr(addrs);
-                System.out.printf("%s=%s[%s]%n",
-                        addrs.getName(),
-                        access.getArray().getName(),
-                        access.getId().getAddr().getName());
-            }
+        }
+        if (!access.isLeft()) {
+            Temp addrs = new Temp();
+            System.out.printf(space()+"%s=%s[%s]%n",
+                    addrs.getName(),
+                    access.getArray().getName(),
+                    access.getAddr().getName());
+            access.setAddr(addrs);
         }
 
     }
@@ -59,12 +60,12 @@ public class IRGenerator implements IVisitor {
         assign.getLoc().accept(this);
         assign.getVal().accept(this);
         if (assign.getLoc() instanceof Access) {
-            System.out.printf("%s[%s]=%s%n",
+            System.out.printf(space()+"%s[%s]=%s%n",
                     ((Access) assign.getLoc()).getArray().getName(),
                     assign.getLoc().getAddr().getName(),
                     assign.getVal().getAddr().getName());
         } else {
-            System.out.printf("%s=%s%n",
+            System.out.printf(space()+"%s=%s%n",
                     assign.getLoc().getAddr().getName(),
                     assign.getVal().getAddr().getName());
         }
@@ -99,7 +100,14 @@ public class IRGenerator implements IVisitor {
     }
 
     public void visit(Break aBreak) {
-
+        AST ast = loopStack.peek();
+        if (ast instanceof Do) {
+            Do stmt = (Do) ast;
+            System.out.println(space()+"goto "+stmt.getBool().getFalseLabel());
+        } else {
+            While stmt = (While) ast;
+            System.out.println(space()+"goto "+stmt.getBool().getFalseLabel());
+        }
     }
 
     public void visit(BuiltInTypeNode builtInTypeNode) {
@@ -153,8 +161,10 @@ public class IRGenerator implements IVisitor {
         stmt.getBool().setFalseLabel(stmt.getNextLabel());
         stmt.getStmt().setNextLabel(stmt.getNextLabel());
         label(trueLabel);
+        loopStack.push(stmt);
         stmt.getStmt().accept(this);
         stmt.getBool().accept(this);
+        loopStack.pop();
     }
 
     public void visit(Else stmt) {
@@ -269,10 +279,12 @@ public class IRGenerator implements IVisitor {
         stmt.getBool().setFalseLabel(stmt.getNextLabel());
         stmt.getStmt().setNextLabel(begin);
         label(begin);
+        loopStack.push(stmt);
         stmt.getBool().accept(this);
         label(trueLabel);
         stmt.getStmt().accept(this);
         System.out.printf(space()+"goto %s%n", begin);
+        loopStack.push(stmt);
     }
 
     public void visit(Statement statement) {
