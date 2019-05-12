@@ -7,4 +7,5 @@ public interface Type {
 
     String getName();
 
+    int getWidth();
 }

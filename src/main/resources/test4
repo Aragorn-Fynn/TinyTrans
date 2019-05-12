@@ -1,0 +1,8 @@
+{
+	int[2][3] a;
+	int c;
+	int i;
+	int j;
+
+    c=c+a[i][j];
+}

@@ -5,10 +5,12 @@ package symtable;
  */
 public class ArrayType extends Symbol implements Type {
     private Type elementType;
-    public ArrayType(Type elementType) {
+    private int elementWidth;
+    public ArrayType(Type elementType, int elementWidth) {
         super(elementType.getName()+"[]");
         super.setType(this);
         this.elementType = elementType;
+        this.elementWidth = elementWidth;
     }
 
     public Type getElementType() {
@@ -22,4 +24,9 @@ public class ArrayType extends Symbol implements Type {
     public String getName() {
         return elementType.getName()+"[]";
     }
+
+    public int getWidth() {
+        return elementWidth;
+    }
+
 }

@@ -12,7 +12,7 @@ public class ArrayTypeNode extends TypeNode {
     private Int index;
 
     public ArrayTypeNode(Token token, TypeNode type, Int index) {
-        super(token, new ArrayType(type.getType()));
+        super(token, new ArrayType(type.getType(), type.getWidth()));
         this.typeNode = type;
         this.index = index;
     }
@@ -39,5 +39,9 @@ public class ArrayTypeNode extends TypeNode {
 
     public String toString() {
         return typeNode.toString()+"["+index+"]";
+    }
+
+    public int getWidth() {
+        return typeNode.getWidth()*Integer.valueOf(index.getToken().getText());
     }
 }

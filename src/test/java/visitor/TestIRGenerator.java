@@ -9,7 +9,7 @@ import parser.Parser;
 
 public class TestIRGenerator {
     public static void main(String[] args) {
-        String fileName = "E:\\workspace\\TinyTrans\\src\\main\\resources\\test3";
+        String fileName = "E:\\workspace\\TinyTrans\\src\\main\\resources\\test4";
         testIRGenerator(fileName);
     }
 
@@ -17,7 +17,9 @@ public class TestIRGenerator {
         Lexer lexer = new FileLexer(fileName);
         Parser parser = new LLParser(lexer);
         AST ast = parser.parse();
-        IVisitor checker = new IRGenerator();
+        IVisitor checker = new SemanticChecker();
         checker.visit((Block)ast);
+        IVisitor generator = new IRGenerator();
+        generator.visit((Block)ast);
     }
 }

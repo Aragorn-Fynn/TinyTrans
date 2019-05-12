@@ -159,6 +159,9 @@ public class LLParser extends Parser {
         match(TokenType.ASSIGN);
         Expr val = bool();
         match(TokenType.SEMI);
+        if (loc instanceof Access) {
+            ((Access)loc).setLeft(true);
+        }
         return new Assign(input.getReserved(TokenType.ASSIGN.getName()), loc, val);
     }
 
@@ -209,17 +212,15 @@ public class LLParser extends Parser {
     private Expr loc() {
         ID id = new ID(lookAhead);
         match(TokenType.ID);
-        Expr expr = loc_(id);
-        return expr;
+        return loc_(id);
     }
 
-    private Expr loc_(ID id) {
+    private ID loc_(ID id) {
         if (lookAhead.getType()==TokenType.LBRACK.getType()) {
             match(TokenType.LBRACK);
             Expr bool = bool();
             match(TokenType.RBRACK);
-            Access access = new Access(id, bool);
-            return access;
+            return loc_(new Access(id, bool));
         } else if (lookAhead.getType()==TokenType.ASSIGN.getType()
                 || lookAhead.getType()==TokenType.NUM.getType()
                 || lookAhead.getType()==TokenType.REAL.getType()

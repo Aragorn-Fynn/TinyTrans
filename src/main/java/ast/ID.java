@@ -1,6 +1,8 @@
 package ast;
 
 import lexer.Token;
+import symtable.Scope;
+import symtable.Symbol;
 import visitor.IVisitor;
 
 /**
@@ -8,6 +10,10 @@ import visitor.IVisitor;
  * ID
  */
 public class ID extends Expr implements Address {
+
+    //用于语义分析
+    private Scope scope;
+    private Symbol array;
 
     public ID(Token token) {
         super(token);
@@ -24,5 +30,21 @@ public class ID extends Expr implements Address {
 
     public String toString() {
         return getName();
+    }
+
+    public Scope getScope() {
+        return scope;
+    }
+
+    public void setScope(Scope scope) {
+        this.scope = scope;
+    }
+
+    public Symbol getArray() {
+        return array;
+    }
+
+    public void setArray(Symbol array) {
+        this.array = array;
     }
 }

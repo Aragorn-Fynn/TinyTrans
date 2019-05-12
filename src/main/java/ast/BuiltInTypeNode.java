@@ -20,4 +20,8 @@ public class BuiltInTypeNode extends TypeNode {
     public String toString() {
         return getToken().getText();
     }
+
+    public int getWidth() {
+        return getType().getWidth();
+    }
 }

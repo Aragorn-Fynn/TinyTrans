@@ -22,10 +22,18 @@ public class SemanticChecker implements IVisitor {
     }
 
     public void visit(Access access) {
-        Symbol symbol = symTable.resolve(access.getId().getToken().getText());
-        if (!(symbol.getType() instanceof ArrayType)) {
-            throw new SemanticException(access.getId().getToken().getText()+"不是数组类型: "+access.toString());
+        access.getId().accept(this);
+        if (!(access.getId() instanceof Access)) {
+            Symbol symbol = symTable.resolve(access.getId().getToken().getText());
+            if (!(symbol.getType() instanceof ArrayType)) {
+                throw new SemanticException(access.getId().getToken().getText()+"不是数组类型: "+access.toString());
+            }
+            access.setType(((ArrayType) symbol.getType()).getElementType());
+            access.getId().setScope(symTable.getCurrentScope());
+        } else {
+            access.setType(((ArrayType)access.getId().getType()).getElementType());
         }
+        access.getIndex().accept(this);
     }
 
     public void visit(ArrayTypeNode arrayTypeNode) {
@@ -78,6 +86,7 @@ public class SemanticChecker implements IVisitor {
         VariableSymbol symbol = new VariableSymbol(id.getToken().getText(), type.getType());
         symbol.setScope(symTable.getCurrentScope());
         symTable.define(symbol);
+
     }
 
     public void visit(DeclareSeq stmt) {

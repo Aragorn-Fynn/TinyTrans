@@ -22,4 +22,7 @@ public abstract class TypeNode extends AST {
     public void setType(Type type) {
         this.type = type;
     }
+
+    public abstract int getWidth();
+
 }

@@ -2,6 +2,10 @@ package visitor;
 
 import ast.*;
 import ast.Float;
+import symtable.ArrayType;
+import symtable.SymTable;
+
+import javax.swing.*;
 
 /**
  * 中间代码生成
@@ -11,6 +15,39 @@ public class IRGenerator implements IVisitor {
     private static int label=0;
 
     public void visit(Access access) {
+        if (!(access.getId() instanceof Access)) {
+            access.setArray(access.getId().getScope().resolve(access.getId().getName()));
+            Temp addr = new Temp();
+            access.setAddr(addr);
+            access.getIndex().accept(this);
+            System.out.printf("%s=%s*%d%n",
+                    addr.getName(),
+                    access.getIndex().getAddr().getName(),
+                    access.getType().getWidth());
+        } else {
+            access.getId().accept(this);
+            access.setArray(access.getId().getArray());
+            Temp temp = new Temp();
+            Temp addr = new Temp();
+            access.setAddr(addr);
+            access.getIndex().accept(this);
+            System.out.printf("%s=%s*%d%n",
+                    temp.getName(),
+                    access.getIndex().getAddr().getName(),
+                    access.getType().getWidth());
+            System.out.printf("%s=%s+%s%n",
+                    addr.getName(),
+                    access.getId().getAddr().getName(),
+                    temp.getName());
+            if (!access.isLeft()) {
+                Temp addrs = new Temp();
+                access.setAddr(addrs);
+                System.out.printf("%s=%s[%s]%n",
+                        addrs.getName(),
+                        access.getArray().getName(),
+                        access.getId().getAddr().getName());
+            }
+        }
 
     }
 
@@ -21,7 +58,16 @@ public class IRGenerator implements IVisitor {
     public void visit(Assign assign) {
         assign.getLoc().accept(this);
         assign.getVal().accept(this);
-        System.out.println(assign.getLoc().getAddr().getName()+"="+assign.getVal().getAddr().getName());
+        if (assign.getLoc() instanceof Access) {
+            System.out.printf("%s[%s]=%s%n",
+                    ((Access) assign.getLoc()).getArray().getName(),
+                    assign.getLoc().getAddr().getName(),
+                    assign.getVal().getAddr().getName());
+        } else {
+            System.out.printf("%s=%s%n",
+                    assign.getLoc().getAddr().getName(),
+                    assign.getVal().getAddr().getName());
+        }
     }
 
     public void visit(Block block) {

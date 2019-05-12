@@ -10,4 +10,7 @@ public class BoolType extends Symbol implements Type {
         super.setType(this);
     }
 
+    public int getWidth() {
+        return 1;
+    }
 }
